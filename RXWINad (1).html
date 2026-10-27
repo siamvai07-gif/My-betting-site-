@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS WIN | Admin Operations Console</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dark: {
+                            950: '#06070A',
+                            900: '#0B0D14',
+                            850: '#10131C',
+                            800: '#151926',
+                            700: '#1F2436',
+                            600: '#2C344D'
+                        },
+                        violet: {
+                            glow: '#9055FF',
+                            500: '#7C3AED',
+                            600: '#6D28D9',
+                            700: '#5B21B6'
+                        },
+                        crimson: {
+                            500: '#F43F5E',
+                            600: '#E11D48',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #07080D; color: #E2E8F0; }
+        .font-mono-num { font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', monospace; }
+        .glass-panel { background: rgba(16, 19, 28, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.07); }
+        .glass-panel:hover { border-color: rgba(144, 85, 255, 0.25); }
+        .sidebar-item { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; border-radius: 10px; margin-bottom: 4px; }
+        .sidebar-item:hover { background: rgba(255, 255, 255, 0.05); color: #FFF; }
+        .active-tab { background: linear-gradient(135deg, rgba(124, 58, 237, 0.3) 0%, rgba(99, 102, 241, 0.2) 100%) !important; color: #FFF !important; border: 1px solid rgba(139, 92, 246, 0.5) !important; box-shadow: 0 4px 20px rgba(124, 58, 237, 0.25); }
+        .hidden-el { display: none !important; }
+        input, select, textarea { background-color: #0B0D14 !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: #F1F5F9 !important; padding: 11px 14px; border-radius: 10px; outline: none; width: 100%; transition: all 0.2s ease; }
+        input:focus, select:focus, textarea:focus { border-color: #8B5CF6 !important; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2) !important; }
+        table th { background-color: #0E1119; font-weight: 700; color: #94A3B8; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+        table td { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.35); }
+        .glow-crimson { box-shadow: 0 0 25px rgba(244, 63, 94, 0.35); }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #07080D; }
+        ::-webkit-scrollbar-thumb { background: #1F2436; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2C344D; }
+    </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-violet-600 selection:text-white">
+
+<!-- NOTIFICATION TOAST CONTAINER -->
+<div id="toastContainer" class="fixed top-5 right-5 z-[11000] flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- CONFIRMATION / ACTION MODAL -->
+<div id="adminActionModal" class="fixed inset-0 z-[10500] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden-el">
+    <div class="glass-panel w-full max-w-md p-6 rounded-2xl shadow-2xl border border-white/10 animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center gap-3 mb-4">
+            <div id="modalIconContainer" class="w-10 h-10 rounded-xl bg-violet-500/20 text-violet-400 flex items-center justify-center text-lg">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+                <h3 id="modalTitle" class="text-lg font-bold text-white">Action Confirmation</h3>
+                <p id="modalSubtitle" class="text-xs text-slate-400">Please review before proceeding</p>
+            </div>
+        </div>
+        <div id="modalBody" class="text-sm text-slate-300 mb-6 leading-relaxed"></div>
+        <div id="modalInputContainer" class="mb-6 hidden-el space-y-3"></div>
+        <div class="flex items-center justify-end gap-3">
+            <button onclick="closeActionModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition">Cancel</button>
+            <button id="modalConfirmBtn" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-500 transition shadow-lg shadow-violet-600/30">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN OVERLAY -->
+<div id="adminLoginSection" class="fixed inset-0 z-[10000] bg-dark-950 flex items-center justify-center p-6 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(124,58,237,0.12),transparent_70%)] pointer-events-none"></div>
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-crimson-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="glass-panel p-8 sm:p-10 rounded-3xl shadow-2xl w-full max-w-md border border-white/10 relative z-10">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-500 text-white text-2xl shadow-lg shadow-violet-500/30 mb-4">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold tracking-tight text-white flex items-center justify-center gap-2">
+                NEXUS<span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-300">ADMIN</span>
+            </h1>
+            <p class="text-slate-400 text-xs font-medium uppercase tracking-widest mt-2">Executive Operations Hub</p>
+        </div>
+        <form onsubmit="event.preventDefault(); checkAdminAccess();" class="space-y-5">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Master Security Key</label>
+                <div class="relative">
+                    <input type="password" id="adminInputPass" class="text-center text-xl tracking-[0.4em] font-mono-num font-bold pr-10" placeholder="••••••••" autocomplete="current-password">
+                    <button type="button" onclick="togglePassVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                        <i id="passEyeIcon" class="far fa-eye"></i>
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2 text-center">Master Key: <code class="text-violet-400 font-mono">SIAMVIP</code></p>
+            </div>
+            <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-violet-600/30 transition transform active:scale-[0.98]">
+                Authenticate & Unlock Console
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- DASHBOARD MAIN LAYOUT -->
+<div id="mainAdminApp" class="flex min-h-screen hidden-el bg-dark-950">
+    
+    <!-- SIDEBAR (DESKTOP) -->
+    <aside id="adminSidebar" class="w-64 bg-dark-900 border-r border-white/5 text-slate-300 flex flex-col sticky top-0 h-screen shrink-0 transition-all duration-300 z-40">
+        <!-- Brand -->
+        <div class="p-5 flex items-center justify-between border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-violet-500/20">
+                    NW
+                </div>
+                <div>
+                    <div class="text-base font-extrabold text-white tracking-tight leading-none">NEXUS WIN</div>
+                    <span class="text-[10px] text-violet-400 font-bold uppercase tracking-wider">Enterprise Ops</span>
+                </div>
+            </div>
+            <button onclick="toggleSidebarCollapse()" class="text-slate-500 hover:text-white p-1 rounded transition hidden lg:block" title="Collapse sidebar">
+                <i class="fas fa-bars-staggered text-sm"></i>
+            </button>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+            <div onclick="switchTab('stats')" id="tab-stats" class="sidebar-item p-3 flex items-center gap-3 active-tab text-xs font-semibold">
+                <i class="fas fa-chart-pie w-5 text-center text-violet-400"></i> <span>Dashboard Overview</span>
+            </div>
+            <div onclick="switchTab('users')" id="tab-users" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                <i class="fas fa-users w-5 text-center text-blue-400"></i> <span>User Registry</span>
+            </div>
+            <div onclick="switchTab('deposits')" id="tab-deposits" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400 relative">
+                <i class="fas fa-arrow-down-to-bracket w-5 text-center text-emerald-400"></i> 
+                <span>Deposits</span>
+                <span id="depCount" class="ml-auto bg-crimson-600 text-white font-bold text-[10px] px-2 py-0.5 rounded-full font-mono-num hidden">0</span>
+            </div>
+            <div onclick="switchTab('withdraws')" id="tab-withdraws" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400 relative">
+                <i class="fas fa-arrow-up-from-bracket w-5 text-center text-rose-400"></i> 
+                <span>Withdrawals</span>
+                <span id="witCount" class="ml-auto bg-crimson-600 text-white font-bold text-[10px] px-2 py-0.5 rounded-full font-mono-num hidden">0</span>
+            </div>
+            <div onclick="switchTab('games')" id="tab-games" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                <i class="fas fa-dice w-5 text-center text-amber-400"></i> <span>WinGo Market Control</span>
+            </div>
+            <div onclick="switchTab('aviator')" id="tab-aviator" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                <i class="fas fa-plane-up w-5 text-center text-crimson-500"></i> <span>Aviator Spribe Engine</span>
+            </div>
+            <div onclick="switchTab('gifts')" id="tab-gifts" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                <i class="fas fa-gift w-5 text-center text-purple-400"></i> <span>Gift Code Vault</span>
+            </div>
+            <div onclick="switchTab('notifs')" id="tab-notifs" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                <i class="fas fa-bell w-5 text-center text-yellow-400"></i> <span>Platform Broadcasts</span>
+            </div>
+            <div onclick="switchTab('settings')" id="tab-settings" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                <i class="fas fa-sliders w-5 text-center text-slate-400"></i> <span>Gateway & Notice Config</span>
+            </div>
+        </nav>
+
+        <!-- User / Quick Action -->
+        <div class="p-4 border-t border-white/5 space-y-2">
+            <div class="flex items-center justify-between text-xs text-slate-400 px-1 mb-2">
+                <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Firebase Live</span>
+                <span class="font-mono text-[11px] text-slate-500">RTDB</span>
+            </div>
+            <button onclick="adminLogout()" class="w-full bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                <i class="fas fa-power-off"></i> <span>Terminate Session</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="flex-1 min-w-0 flex flex-col h-screen overflow-y-auto">
+        <!-- Top App Bar -->
+        <header class="bg-dark-900/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-30 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleMobileSidebar()" class="lg:hidden text-slate-400 hover:text-white p-2">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                <div>
+                    <h1 id="pageHeading" class="text-lg font-bold text-white tracking-tight">Dashboard Overview</h1>
+                    <p id="pageSubheading" class="text-xs text-slate-400">Real-time telemetry and financial summaries</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-dark-850 border border-white/5 rounded-xl px-3 py-1.5 text-xs text-slate-400">
+                    <i class="fas fa-clock text-violet-400"></i>
+                    <span id="systemClock" class="font-mono font-medium">--:--:--</span>
+                </div>
+                <a href="/AVVV.html" target="_blank" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-violet-600/20 text-violet-300 border border-violet-500/30 hover:bg-violet-600/30 transition flex items-center gap-1.5">
+                    <i class="fas fa-external-link-alt text-[10px]"></i> User App
+                </a>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-8 space-y-8 flex-1 max-w-7xl w-full mx-auto">
+            
+            <!-- SECTION 1: STATS / DASHBOARD -->
+            <section id="sec-stats" class="admin-page space-y-6">
+                <!-- KPI CARDS -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- Total Users -->
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Members</span>
+                            <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <h3 id="statTotalUsers" class="text-3xl font-extrabold text-white font-mono-num">0</h3>
+                        <p class="text-[11px] text-slate-500 mt-2 flex items-center gap-1">
+                            <i class="fas fa-circle-check text-emerald-400"></i> Verified Accounts
+                        </p>
+                    </div>
+
+                    <!-- Total Deposits -->
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Completed Deposits</span>
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-vault"></i>
+                            </div>
+                        </div>
+                        <h3 id="statTotalDep" class="text-3xl font-extrabold text-emerald-400 font-mono-num">৳0.00</h3>
+                        <p class="text-[11px] text-slate-500 mt-2">Cumulative inbound flow</p>
+                    </div>
+
+                    <!-- Total Withdrawals -->
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Paid Withdrawals</span>
+                            <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-money-bill-transfer"></i>
+                            </div>
+                        </div>
+                        <h3 id="statTotalWit" class="text-3xl font-extrabold text-rose-400 font-mono-num">৳0.00</h3>
+                        <p class="text-[11px] text-slate-500 mt-2">Total approved cashouts</p>
+                    </div>
+
+                    <!-- Safe Balance -->
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Vault Safe Balances</span>
+                            <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <h3 id="statTotalSafe" class="text-3xl font-extrabold text-amber-300 font-mono-num">৳0.00</h3>
+                        <p class="text-[11px] text-slate-500 mt-2">Secured interest funds</p>
+                    </div>
+                </div>
+
+                <!-- DUAL SUMMARY PANELS -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Latest Registered Users -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/5">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-violet-600/20 text-violet-400 flex items-center justify-center text-xs">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <h4 class="font-bold text-sm text-white">Recent Registrations</h4>
+                            </div>
+                            <button onclick="switchTab('users')" class="text-xs text-violet-400 hover:text-violet-300 font-semibold">View All</button>
+                        </div>
+                        <div id="latestUsersList" class="space-y-3">
+                            <div class="text-center py-8 text-slate-500 text-xs">Awaiting user entries...</div>
+                        </div>
+                    </div>
+
+                    <!-- Live Betting Monitor -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/5">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-xs">
+                                    <i class="fas fa-radar"></i>
+                                </div>
+                                <h4 class="font-bold text-sm text-white">Live WinGo 30s Bets</h4>
+                            </div>
+                            <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">STREAMING</span>
+                        </div>
+                        <div id="liveBetsPanel" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+                            <p class="text-slate-500 italic text-xs text-center py-8">Monitoring real-time round wagers...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: USERS -->
+            <section id="sec-users" class="admin-page hidden-el space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">User Accounts Database</h2>
+                        <p class="text-xs text-slate-400">Inspect credentials, modify wallet balances, and manage wagering thresholds</p>
+                    </div>
+                    <div class="w-full sm:w-auto relative">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                        <input type="text" id="userSearchInp" oninput="filterUsers()" placeholder="Search by Phone or UID..." class="w-full sm:w-72 pl-9 text-xs">
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="p-4">User Identity</th>
+                                    <th class="p-4">Account Balance</th>
+                                    <th class="p-4">Turnover Req.</th>
+                                    <th class="p-4">Password</th>
+                                    <th class="p-4">Joined</th>
+                                    <th class="p-4 text-center">Manage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody" class="divide-y divide-white/5">
+                                <tr>
+                                    <td colspan="6" class="p-8 text-center text-slate-500 text-xs">Loading user repository...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: DEPOSITS -->
+            <section id="sec-deposits" class="admin-page hidden-el space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Pending Deposit Requests</h2>
+                        <p class="text-xs text-slate-400">Verify sender TrxID, approve balance credit, and advance turnover requirement</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="renderPendingTransactions()" class="px-3 py-1.5 rounded-lg bg-dark-850 hover:bg-dark-800 text-slate-300 text-xs font-semibold border border-white/5 transition flex items-center gap-1.5">
+                            <i class="fas fa-sync-alt text-[10px]"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div id="depositRequestsList" class="space-y-3">
+                    <div class="text-center py-12 text-slate-500 text-xs">Querying deposit registry...</div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: WITHDRAWS -->
+            <section id="sec-withdraws" class="admin-page hidden-el space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Pending Withdrawal Requests</h2>
+                        <p class="text-xs text-slate-400">Approve payout settlements or reject requests to refund balances</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="renderPendingTransactions()" class="px-3 py-1.5 rounded-lg bg-dark-850 hover:bg-dark-800 text-slate-300 text-xs font-semibold border border-white/5 transition flex items-center gap-1.5">
+                            <i class="fas fa-sync-alt text-[10px]"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div id="withdrawRequestsList" class="space-y-3">
+                    <div class="text-center py-12 text-slate-500 text-xs">Querying withdrawal queue...</div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: WINGO CONTROL -->
+            <section id="sec-games" class="admin-page hidden-el space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white">WinGo Lottery Result Control</h2>
+                    <p class="text-xs text-slate-400">Override default algorithmic payout optimization with deterministic winning digits</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel p-6 rounded-2xl space-y-5">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
+                            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-hand-holding-hand"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">Force Market Result</h3>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Target Market Interval</label>
+                                <select id="wingoTargetMarket">
+                                    <option value="30s">WinGo 30 Seconds</option>
+                                    <option value="1m">WinGo 1 Minute</option>
+                                    <option value="3m">WinGo 3 Minutes</option>
+                                    <option value="5m">WinGo 5 Minutes</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Desired Number (0 - 9)</label>
+                                <select id="wingoTargetNum">
+                                    <option value="">Random (Autonomous Minimum-Loss Algorithm)</option>
+                                    <option value="0">0 (Red + Violet / Small)</option>
+                                    <option value="1">1 (Green / Small)</option>
+                                    <option value="2">2 (Red / Small)</option>
+                                    <option value="3">3 (Green / Small)</option>
+                                    <option value="4">4 (Red / Small)</option>
+                                    <option value="5">5 (Green + Violet / Big)</option>
+                                    <option value="6">6 (Red / Big)</option>
+                                    <option value="7">7 (Green / Big)</option>
+                                    <option value="8">8 (Red / Big)</option>
+                                    <option value="9">9 (Green / Big)</option>
+                                </select>
+                            </div>
+
+                            <button onclick="setForcedResult()" class="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-amber-600/20 transition active:scale-[0.98]">
+                                Apply Forced WinGo Digit
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl space-y-4 text-xs text-slate-400">
+                        <h4 class="font-bold text-white text-sm border-b border-white/5 pb-2">Operational Logic & Guardrails</h4>
+                        <p class="leading-relaxed">
+                            When set to <strong>Random</strong>, the system examines all player wagers for the active period right before resolution and deterministically chooses the digit resulting in the lowest platform liability.
+                        </p>
+                        <p class="leading-relaxed">
+                            A forced digit is immediately synced with the Firebase <code class="text-violet-400 font-mono">admin_control</code> node and executes once on the upcoming period before resetting.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: AVIATOR CONTROL -->
+            <section id="sec-aviator" class="admin-page hidden-el space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Aviator Crash Engine Control</h2>
+                    <p class="text-xs text-slate-400">Configure immediate flight crash multipliers or prime a sequential flight queue</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Direct Result -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
+                            <div class="w-8 h-8 rounded-xl bg-crimson-600/10 text-crimson-500 flex items-center justify-center text-sm">
+                                <i class="fas fa-crosshairs"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">Single-Flight Direct Multiplier</h3>
+                        </div>
+                        <p class="text-xs text-slate-400">
+                            Enter the exact crash multiplier for the upcoming flight. The engine will consume and clear this signal immediately after takeoff.
+                        </p>
+                        <input type="number" step="0.01" id="avTargetSignal" placeholder="e.g. 1.85 or 12.50" class="font-mono-num font-bold text-sm">
+                        <button onclick="setAviatorDirectSignal()" class="w-full bg-crimson-600 hover:bg-crimson-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-crimson-600/25 transition active:scale-[0.98]">
+                            Engage Immediate Target
+                        </button>
+                    </div>
+
+                    <!-- Queue Control -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
+                            <div class="w-8 h-8 rounded-xl bg-violet-600/10 text-violet-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">Multi-Round Flight Queue</h3>
+                        </div>
+                        <p class="text-xs text-slate-400">
+                            Provide comma-delimited multipliers executed consecutively round-by-round.
+                        </p>
+                        <textarea id="avSignalQueue" class="h-24 font-mono-num text-xs" placeholder="1.25, 2.40, 1.10, 8.50"></textarea>
+                        <button onclick="setAviatorQueue()" class="w-full bg-dark-800 hover:bg-dark-700 text-white font-bold py-3.5 rounded-xl border border-white/10 transition active:scale-[0.98]">
+                            Commit Multiplier Queue
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: GIFT CODES -->
+            <section id="sec-gifts" class="admin-page hidden-el space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Redemption Gift Code Vault</h2>
+                    <p class="text-xs text-slate-400">Mint promotional redeemable vouchers for community giveaways and user rewards</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass-panel p-6 rounded-2xl space-y-4 h-fit">
+                        <h3 class="font-bold text-sm text-white border-b border-white/5 pb-2">Generate Voucher</h3>
+                        <div class="space-y-3.5">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Voucher Code</label>
+                                <input type="text" id="giftName" placeholder="e.g. FESTIVE2026" class="font-mono uppercase font-bold text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Bonus Reward (৳)</label>
+                                <input type="number" id="giftAmount" placeholder="e.g. 50" class="font-mono-num text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Max Redemptions</label>
+                                <input type="number" id="giftLimit" placeholder="e.g. 100" class="font-mono-num text-sm">
+                            </div>
+                            <button onclick="createGiftCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition active:scale-[0.98]">
+                                Mint Promotional Code
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                            <h3 class="font-bold text-sm text-white">Active Promotional Codes</h3>
+                            <span id="activeGiftCount" class="text-xs font-mono text-slate-500">0 Total</span>
+                        </div>
+                        <div id="adminGiftList" class="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
+                            <div class="text-center py-10 text-slate-500 text-xs">No active vouchers recorded.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: NOTIFICATIONS -->
+            <section id="sec-notifs" class="admin-page hidden-el space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Broadcast Platform Notifications</h2>
+                    <p class="text-xs text-slate-400">Publish global system announcements directly to all user activity dashboards</p>
+                </div>
+
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl max-w-2xl space-y-4">
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Subject / Headline</label>
+                        <input type="text" id="notifTitle" placeholder="e.g. Scheduled Gateway Maintenance Notice" class="text-sm font-semibold">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Detailed Message Content</label>
+                        <textarea id="notifBody" class="h-32 text-sm" placeholder="Detail the release note, event promo, or system notification here..."></textarea>
+                    </div>
+                    <button onclick="sendNotification()" class="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-violet-600/30 transition active:scale-[0.98] flex items-center justify-center gap-2">
+                        <i class="fas fa-bullhorn text-xs"></i> <span>Broadcast to All Devices</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SECTION 9: SETTINGS -->
+            <section id="sec-settings" class="admin-page hidden-el space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Gateway & Modal Configuration</h2>
+                    <p class="text-xs text-slate-400">Configure administrative payment accounts and landing popup announcements</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Deposit Numbers -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
+                            <div class="w-8 h-8 rounded-xl bg-violet-600/10 text-violet-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">Deposit Gateway Receiving Numbers</h3>
+                        </div>
+                        <div class="space-y-3.5">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">bKash Personal / Agent Number</label>
+                                <input type="text" id="setBkashNum" placeholder="017xxxxxxxx" class="font-mono text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Nagad Personal / Agent Number</label>
+                                <input type="text" id="setNagadNum" placeholder="018xxxxxxxx" class="font-mono text-sm">
+                            </div>
+                            <button onclick="saveAdminNumbers()" class="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-3 rounded-xl shadow-md transition active:scale-[0.98]">
+                                Update Payment Gateways
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Announcement -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
+                            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-message-exclamation"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">Modal Announcement Broadcast</h3>
+                        </div>
+                        <div class="space-y-3.5">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Popup Banner Body</label>
+                                <textarea id="setPopupMsg" class="h-24 text-sm" placeholder="Enter emergency or event notice displayed on app entry..."></textarea>
+                            </div>
+                            <label class="flex items-center gap-3 p-3 bg-dark-900 rounded-xl border border-white/5 cursor-pointer">
+                                <input type="checkbox" id="setPopupActive" class="w-4 h-4 text-violet-600 rounded">
+                                <span class="text-xs font-semibold text-slate-300">Enable Arrival Popup for Players</span>
+                            </label>
+                            <button onclick="savePopupSettings()" class="w-full bg-dark-800 hover:bg-dark-700 text-white font-bold py-3 rounded-xl border border-white/10 transition active:scale-[0.98]">
+                                Commit Modal Configuration
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script>
+// =========================================================================
+// FIREBASE CONFIGURATION (EXACT MATCHING WITH USER PANEL)
+// =========================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBGaFtX-4JYrW_rhKLn--_hHgo1I2UdGGE",
+  authDomain: "luckyspin-5ff98.firebaseapp.com",
+  databaseURL: "https://luckyspin-5ff98-default-rtdb.firebaseio.com",
+  projectId: "luckyspin-5ff98",
+  storageBucket: "luckyspin-5ff98.firebasestorage.app",
+  messagingSenderId: "653880368423",
+  appId: "1:653880368423:web:5efc8fc2f06d0bd7765d02",
+  measurementId: "G-BK1VH2ZFG8"
+};
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+
+const VALID_KEYS = ["SIAMVIP", "siamvip", "rswinpass123"];
+
+function showToast(msg, type = 'info') {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    const color = type === 'success' ? 'bg-emerald-600 text-white' : (type === 'error' ? 'bg-rose-600 text-white' : 'bg-dark-800 text-slate-200 border border-white/10');
+    t.className = `p-3.5 px-4 rounded-xl text-xs font-semibold shadow-2xl flex items-center gap-2.5 transition-all transform duration-300 translate-y-2 opacity-0 pointer-events-auto ${color}`;
+    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-circle-xmark' : 'fa-info-circle')}"></i> <span>${msg}</span>`;
+    c.appendChild(t);
+    requestAnimationFrame(() => {
+        t.classList.remove('translate-y-2', 'opacity-0');
+    });
+    setTimeout(() => {
+        t.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => t.remove(), 300);
+    }, 3500);
+}
+
+function togglePassVisibility() {
+    const inp = document.getElementById('adminInputPass');
+    const icon = document.getElementById('passEyeIcon');
+    if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.className = 'far fa-eye-slash text-violet-400';
+    } else {
+        inp.type = 'password';
+        icon.className = 'far fa-eye text-slate-500';
+    }
+}
+
+function checkAdminAccess() {
+    const entered = document.getElementById('adminInputPass').value.trim();
+    if (VALID_KEYS.includes(entered) || entered.toUpperCase() === 'SIAMVIP') {
+        sessionStorage.setItem('nexus_admin_authed', 'true');
+        document.getElementById('adminLoginSection').classList.add('hidden-el');
+        document.getElementById('mainAdminApp').classList.remove('hidden-el');
+        showToast("Authenticated. Welcome to the Console.", "success");
+        startAdminEngine();
+    } else {
+        showToast("Access Denied: Invalid Security Key", "error");
+    }
+}
+
+function adminLogout() {
+    sessionStorage.removeItem('nexus_admin_authed');
+    location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Clock
+    setInterval(() => {
+        const d = new Date();
+        const el = document.getElementById('systemClock');
+        if (el) el.innerText = d.toLocaleTimeString('en-US', { hour12: false });
+    }, 1000);
+
+    if (sessionStorage.getItem('nexus_admin_authed') === 'true') {
+        document.getElementById('adminLoginSection').classList.add('hidden-el');
+        document.getElementById('mainAdminApp').classList.remove('hidden-el');
+        startAdminEngine();
+    }
+});
+
+// =========================================================================
+// NAVIGATION & VIEW SWITCHING
+// =========================================================================
+const pageMeta = {
+    stats: { title: "Dashboard Overview", subtitle: "Real-time telemetry and financial summaries" },
+    users: { title: "User Registry & Balances", subtitle: "Inspect credentials, adjust wallets, and manage wagering" },
+    deposits: { title: "Deposit Approvals", subtitle: "Verify transaction IDs and approve player deposit slips" },
+    withdraws: { title: "Withdrawal Approvals", subtitle: "Process settlements or return balances on rejected cashouts" },
+    games: { title: "WinGo Lottery Control", subtitle: "Configure deterministic digits for live rounds" },
+    aviator: { title: "Aviator Flight Engine", subtitle: "Direct crash target engagement and flight sequencing" },
+    gifts: { title: "Promotional Gift Codes", subtitle: "Mint vouchers with usage quotas and instant balance drops" },
+    notifs: { title: "Platform Broadcasts", subtitle: "Send notices to player notification centers" },
+    settings: { title: "Gateway & Notice Config", subtitle: "Configure recipient payment numbers and arrival notices" }
+};
+
+function switchTab(t) {
+    document.querySelectorAll('.admin-page').forEach(p => p.classList.add('hidden-el'));
+    const target = document.getElementById('sec-' + t);
+    if (target) target.classList.remove('hidden-el');
+    
+    document.querySelectorAll('.sidebar-item').forEach(i => {
+        i.classList.remove('active-tab');
+        i.classList.add('text-slate-400');
+    });
+    const activeItem = document.getElementById('tab-' + t);
+    if (activeItem) {
+        activeItem.classList.add('active-tab');
+        activeItem.classList.remove('text-slate-400');
+    }
+
+    if (pageMeta[t]) {
+        document.getElementById('pageHeading').innerText = pageMeta[t].title;
+        document.getElementById('pageSubheading').innerText = pageMeta[t].subtitle;
+    }
+}
+
+function toggleMobileSidebar() {
+    const s = document.getElementById('adminSidebar');
+    s.classList.toggle('hidden');
+}
+
+function toggleSidebarCollapse() {
+    const s = document.getElementById('adminSidebar');
+    s.classList.toggle('w-64');
+    s.classList.toggle('w-20');
+}
+
+// =========================================================================
+// MODALS
+// =========================================================================
+let modalConfirmCallback = null;
+
+function openActionModal({ title, subtitle, icon, iconColor, content, inputs = [], onConfirm }) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalSubtitle').innerText = subtitle || '';
+    document.getElementById('modalBody').innerHTML = content;
+    
+    const inpContainer = document.getElementById('modalInputContainer');
+    inpContainer.innerHTML = '';
+    if (inputs.length > 0) {
+        inpContainer.classList.remove('hidden-el');
+        inputs.forEach(inp => {
+            const wrap = document.createElement('div');
+            wrap.innerHTML = `
+                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">${inp.label}</label>
+                <input id="${inp.id}" type="${inp.type || 'text'}" value="${inp.value || ''}" class="font-mono text-sm" placeholder="${inp.placeholder || ''}">
+            `;
+            inpContainer.appendChild(wrap);
+        });
+    } else {
+        inpContainer.classList.add('hidden-el');
+    }
+
+    modalConfirmCallback = onConfirm;
+    document.getElementById('modalConfirmBtn').onclick = () => {
+        if (modalConfirmCallback) modalConfirmCallback();
+        closeActionModal();
+    };
+
+    document.getElementById('adminActionModal').classList.remove('hidden-el');
+}
+
+function closeActionModal() {
+    document.getElementById('adminActionModal').classList.add('hidden-el');
+    modalConfirmCallback = null;
+}
+
+// =========================================================================
+// DATA ENGINE
+// =========================================================================
+let usersCache = {};
+
+function startAdminEngine() {
+    // 1. Users Stream
+    db.ref('users').on('value', snap => {
+        usersCache = snap.val() || {};
+        renderDashboard();
+        renderUserTable();
+        renderPendingTransactions();
+    });
+
+    // 2. Settings Stream
+    db.ref('admin_settings').on('value', snap => {
+        const s = snap.val() || {};
+        const bkashEl = document.getElementById('setBkashNum');
+        const nagadEl = document.getElementById('setNagadNum');
+        const msgEl = document.getElementById('setPopupMsg');
+        const activeEl = document.getElementById('setPopupActive');
+        
+        if (bkashEl) bkashEl.value = (s.deposit_numbers && (s.deposit_numbers.Bkash || s.deposit_numbers.bkash)) || "";
+        if (nagadEl) nagadEl.value = (s.deposit_numbers && (s.deposit_numbers.Nagad || s.deposit_numbers.nagad)) || "";
+        if (msgEl) msgEl.value = s.popup_message || "";
+        if (activeEl) activeEl.checked = s.popup_active || false;
+    });
+
+    // 3. Gift Codes Stream
+    db.ref('gift_codes').on('value', renderGifts);
+
+    // 4. Live Bets Stream (WinGo 30s)
+    db.ref('admin_live_bets/30s').limitToLast(20).on('value', snap => {
+        const panel = document.getElementById('liveBetsPanel');
+        const bets = snap.val();
+        if (!bets) {
+            panel.innerHTML = '<p class="text-slate-500 italic text-xs text-center py-8">No active wagers placed yet.</p>';
+            return;
+        }
+        let html = '';
+        const list = Object.values(bets).reverse();
+        list.forEach(b => {
+            const timeStr = b.timestamp ? new Date(b.timestamp).toLocaleTimeString([], { hour12: false }) : '';
+            html += `
+                <div class="flex items-center justify-between text-xs bg-dark-900 border border-white/5 p-2.5 rounded-xl hover:border-violet-500/20 transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-6 h-6 rounded-lg bg-violet-600/20 text-violet-400 flex items-center justify-center text-[10px] font-mono font-bold">${(b.selection || '').charAt(0)}</span>
+                        <div>
+                            <p class="font-bold text-white">${b.name || b.phone || 'Player'} <span class="text-slate-500 font-mono text-[10px]">(${b.uid || '---'})</span></p>
+                            <span class="text-[10px] text-slate-500">${timeStr}</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-mono-num font-bold text-emerald-400">৳${parseFloat(b.amount || 0).toFixed(2)}</span>
+                        <span class="block text-[10px] uppercase font-bold text-violet-300">${b.selection}</span>
+                    </div>
+                </div>
+            `;
+        });
+        panel.innerHTML = html;
+    });
+}
+
+function renderDashboard() {
+    let uCount = 0, totalDep = 0, totalWit = 0, totalSafe = 0;
+    const latestUsers = [];
+
+    Object.values(usersCache).forEach(u => {
+        uCount++;
+        totalSafe += parseFloat(u.safeBox || 0);
+        if (u.transactions) {
+            const txs = Array.isArray(u.transactions) ? u.transactions : Object.values(u.transactions);
+            txs.forEach(t => {
+                const amt = parseFloat(t.amount || 0);
+                const st = String(t.status || '').toLowerCase();
+                if (t.type === 'Deposit' && (st === 'complete' || st === 'accepted' || st === 'success')) totalDep += amt;
+                if (t.type === 'Withdraw' && (st === 'complete' || st === 'accepted' || st === 'success')) totalWit += amt;
+            });
+        }
+        latestUsers.push(u);
+    });
+
+    document.getElementById('statTotalUsers').innerText = uCount.toLocaleString();
+    document.getElementById('statTotalDep').innerText = "৳" + totalDep.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('statTotalWit').innerText = "৳" + totalWit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('statTotalSafe').innerText = "৳" + totalSafe.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    latestUsers.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+    let lHtml = '';
+    latestUsers.slice(0, 5).forEach(u => {
+        lHtml += `
+            <div class="flex items-center justify-between text-xs p-3 bg-dark-900 border border-white/5 rounded-xl">
+                <div class="flex items-center gap-3">
+                    <img src="${u.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + u.uid}" class="w-8 h-8 rounded-full bg-dark-800 object-cover border border-white/10">
+                    <div>
+                        <p class="font-bold text-white">${u.name || u.phone}</p>
+                        <p class="text-[10px] text-slate-500 font-mono">UID: ${u.uid} · ${u.joinDate || 'Recent'}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="font-mono-num font-bold text-emerald-400">৳${parseFloat(u.balance || 0).toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+    });
+    document.getElementById('latestUsersList').innerHTML = lHtml || '<div class="text-center py-6 text-slate-500 text-xs">No registered accounts yet.</div>';
+}
+
+function renderUserTable(filterQuery = '') {
+    const tbody = document.getElementById('userTableBody');
+    let html = '';
+    const query = filterQuery.toLowerCase().trim();
+
+    const users = Object.values(usersCache).filter(u => {
+        if (!query) return true;
+        return (u.phone && String(u.phone).toLowerCase().includes(query)) ||
+               (u.uid && String(u.uid).toLowerCase().includes(query)) ||
+               (u.name && String(u.name).toLowerCase().includes(query));
+    });
+
+    if (users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500 text-xs">No users matching query.</td></tr>`;
+        return;
+    }
+
+    users.forEach(u => {
+        html += `
+        <tr class="hover:bg-white/[0.02] transition text-xs">
+            <td class="p-4">
+                <div class="flex items-center gap-3">
+                    <img src="${u.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + u.uid}" class="w-8 h-8 rounded-full bg-dark-800 object-cover border border-white/10">
+                    <div>
+                        <p class="font-bold text-white">${u.phone}</p>
+                        <p class="text-[10px] text-violet-400 font-mono">UID: ${u.uid}</p>
+                    </div>
+                </div>
+            </td>
+            <td class="p-4 font-mono-num font-bold text-emerald-400">৳${parseFloat(u.balance || 0).toFixed(2)}</td>
+            <td class="p-4 font-mono-num font-bold text-rose-400">৳${parseFloat(u.wager_left || 0).toFixed(2)}</td>
+            <td class="p-4 font-mono text-[11px] text-slate-400">${u.pass || '••••••'}</td>
+            <td class="p-4 text-slate-400">${u.joinDate || "N/A"}</td>
+            <td class="p-4 text-center">
+                <div class="flex items-center justify-center gap-2">
+                    <button onclick="editUserPrompt('${u.phone}')" class="px-2.5 py-1.5 rounded-lg bg-violet-600/20 text-violet-300 hover:bg-violet-600/30 transition text-xs font-semibold" title="Modify balance & turnover">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    <button onclick="deleteUser('${u.phone}')" class="px-2.5 py-1.5 rounded-lg bg-rose-600/20 text-rose-300 hover:bg-rose-600/30 transition text-xs font-semibold" title="Delete account">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+function filterUsers() {
+    const q = document.getElementById('userSearchInp').value;
+    renderUserTable(q);
+}
+
+function renderPendingTransactions() {
+    const depList = document.getElementById('depositRequestsList');
+    const witList = document.getElementById('withdrawRequestsList');
+    let depHtml = '', witHtml = '', depCount = 0, witCount = 0;
+
+    Object.values(usersCache).forEach(u => {
+        if (u.transactions) {
+            const entries = Object.entries(u.transactions);
+            entries.forEach(([txKey, t]) => {
+                const st = String(t.status || '').toLowerCase();
+                if (st === 'pending') {
+                    const isDep = t.type === 'Deposit';
+                    const dateStr = t.date || (t.timestamp ? new Date(t.timestamp).toLocaleString() : 'N/A');
+                    
+                    const card = `
+                    <div class="glass-panel p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-violet-500/20 transition">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl ${isDep ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} flex items-center justify-center text-base shrink-0">
+                                <i class="fas ${isDep ? 'fa-arrow-down-to-bracket' : 'fa-arrow-up-from-bracket'}"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <p class="text-sm font-bold text-white">${u.phone}</p>
+                                    <span class="text-[10px] text-violet-400 font-mono bg-violet-950/60 border border-violet-500/20 px-1.5 py-0.5 rounded">UID ${u.uid}</span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-0.5 font-medium">
+                                    ${t.method || 'Gateway'} · ${t.channel || ''} · <span class="font-mono text-slate-300">TrxID: ${t.trx || t.orderNum || 'N/A'}</span>
+                                </p>
+                                <span class="text-[10px] text-slate-500 mt-1 block">${dateStr}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                            <div class="text-left sm:text-right">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Amount</p>
+                                <p class="text-xl font-extrabold ${isDep ? 'text-emerald-400' : 'text-rose-400'} font-mono-num">৳${parseFloat(t.amount || 0).toFixed(2)}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="actionTx('${u.phone}', '${txKey}', 'complete', '${t.type}', ${t.amount})" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-600/20 flex items-center gap-1.5">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button onclick="actionTx('${u.phone}', '${txKey}', 'rejected', '${t.type}', ${t.amount})" class="px-4 py-2 bg-rose-600/20 text-rose-300 hover:bg-rose-600/40 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+
+                    if (isDep) {
+                        depHtml += card;
+                        depCount++;
+                    } else if (t.type === 'Withdraw') {
+                        witHtml += card;
+                        witCount++;
+                    }
+                }
+            });
+        }
+    });
+
+    depList.innerHTML = depHtml || '<div class="text-center py-12 text-slate-500 text-xs glass-panel rounded-2xl">Zero pending deposits in queue.</div>';
+    witList.innerHTML = witHtml || '<div class="text-center py-12 text-slate-500 text-xs glass-panel rounded-2xl">Zero pending withdrawals in queue.</div>';
+
+    const depBadge = document.getElementById('depCount');
+    depBadge.innerText = depCount;
+    depBadge.classList.toggle('hidden', depCount === 0);
+
+    const witBadge = document.getElementById('witCount');
+    witBadge.innerText = witCount;
+    witBadge.classList.toggle('hidden', witCount === 0);
+}
+
+// =========================================================================
+// ACTION HANDLERS
+// =========================================================================
+function editUserPrompt(phone) {
+    const u = usersCache[phone];
+    if (!u) return;
+
+    openActionModal({
+        title: `Modify User: ${phone}`,
+        subtitle: `UID: ${u.uid}`,
+        content: `Update current balance and required turnover. Changes synchronize to player's app in real-time.`,
+        inputs: [
+            { id: 'editBal', label: 'Main Balance (৳)', type: 'number', value: u.balance || 0 },
+            { id: 'editWager', label: 'Wager Turnover Remaining (৳)', type: 'number', value: u.wager_left || 0 }
+        ],
+        onConfirm: () => {
+            const newBal = parseFloat(document.getElementById('editBal').value);
+            const newWager = parseFloat(document.getElementById('editWager').value);
+            if (isNaN(newBal) || isNaN(newWager)) {
+                showToast("Invalid numbers provided", "error");
+                return;
+            }
+            db.ref('users/' + phone).update({
+                balance: newBal,
+                wager_left: newWager
+            }).then(() => {
+                showToast(`User ${phone} records updated`, "success");
+            });
+        }
+    });
+}
+
+function deleteUser(phone) {
+    openActionModal({
+        title: "Confirm Account Purge",
+        subtitle: `Phone: ${phone}`,
+        content: `<span class="text-rose-400 font-bold">WARNING:</span> This operation irreversibly removes this account, transactions, and betting logs from the database.`,
+        onConfirm: () => {
+            db.ref('users/' + phone).remove().then(() => {
+                showToast(`User ${phone} purged from database`, "success");
+            });
+        }
+    });
+}
+
+function actionTx(phone, txKey, status, type, amount) {
+    const u = usersCache[phone];
+    if (!u) return;
+    const isApprove = status === 'complete';
+
+    openActionModal({
+        title: `${isApprove ? 'Approve' : 'Reject'} ${type}`,
+        subtitle: `${phone} · ৳${parseFloat(amount).toFixed(2)}`,
+        content: `Are you sure you want to mark this transaction as <strong class="${isApprove ? 'text-emerald-400' : 'text-rose-400'}">${status.toUpperCase()}</strong>?`,
+        onConfirm: () => {
+            let updates = {};
+            updates[`users/${phone}/transactions/${txKey}/status`] = status;
+
+            // Balance adjustment rules
+            if (type === 'Deposit' && status === 'complete') {
+                updates[`users/${phone}/balance`] = (parseFloat(u.balance) || 0) + parseFloat(amount);
+            }
+            if (type === 'Withdraw' && status === 'rejected') {
+                // Refund back to user
+                updates[`users/${phone}/balance`] = (parseFloat(u.balance) || 0) + parseFloat(amount);
+            }
+
+            db.ref().update(updates).then(() => {
+                showToast(`${type} marked as ${status}`, "success");
+            }).catch(err => {
+                showToast(err.message, "error");
+            });
+        }
+    });
+}
+
+// 1. Forced WinGo Result
+function setForcedResult() {
+    const market = document.getElementById('wingoTargetMarket').value;
+    const num = document.getElementById('wingoTargetNum').value;
+    const refKey = market === '30s' ? 'forcedResult_30s' : `forcedResult_${market}`;
+
+    db.ref('admin_control').update({
+        [refKey]: num === "" ? null : num
+    }).then(() => {
+        showToast(`WinGo (${market}) set to: ${num === "" ? "Random Payout Algorithm" : "Digit " + num}`, "success");
+    });
+}
+
+// 2. Aviator Direct & Queue
+function setAviatorDirectSignal() {
+    const val = document.getElementById('avTargetSignal').value;
+    if (!val || parseFloat(val) <= 1.0) {
+        showToast("Enter a valid multiplier (> 1.00)", "error");
+        return;
+    }
+    db.ref('admin_control/aviator_data').update({ direct_signal: parseFloat(val) }).then(() => {
+        showToast(`Next Aviator Flight Target fixed at ${val}x`, "success");
+        document.getElementById('avTargetSignal').value = '';
+    });
+}
+
+function setAviatorQueue() {
+    const q = document.getElementById('avSignalQueue').value.trim();
+    db.ref('admin_control/aviator_data').update({ signal_queue: q }).then(() => {
+        showToast("Aviator sequence queue committed", "success");
+    });
+}
+
+// 3. Gift Codes
+function createGiftCode() {
+    const name = document.getElementById('giftName').value.trim().toUpperCase();
+    const amt = parseFloat(document.getElementById('giftAmount').value);
+    const lim = parseInt(document.getElementById('giftLimit').value);
+
+    if (!name || isNaN(amt) || isNaN(lim) || amt <= 0 || lim <= 0) {
+        showToast("Fill all gift code specifications correctly", "error");
+        return;
+    }
+
+    db.ref('gift_codes/' + name).set({
+        amount: amt,
+        maxLimit: lim,
+        active: true,
+        claimedUsers: {}
+    }).then(() => {
+        showToast(`Voucher ${name} minted for ৳${amt} (${lim} claims)`, "success");
+        document.getElementById('giftName').value = '';
+        document.getElementById('giftAmount').value = '';
+        document.getElementById('giftLimit').value = '';
+    });
+}
+
+function renderGifts(snap) {
+    const list = document.getElementById('adminGiftList');
+    const data = snap.val();
+    if (!data) {
+        list.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">No active vouchers recorded.</div>';
+        document.getElementById('activeGiftCount').innerText = '0 Total';
+        return;
+    }
+
+    const entries = Object.entries(data);
+    document.getElementById('activeGiftCount').innerText = `${entries.length} Total`;
+    let html = '';
+
+    entries.forEach(([code, d]) => {
+        const used = d.claimedUsers ? Object.keys(d.claimedUsers).length : 0;
+        const isDepleted = used >= (d.maxLimit || 1);
+
+        html += `
+            <div class="flex items-center justify-between p-3.5 bg-dark-900 border border-white/5 rounded-xl text-xs">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center font-mono font-bold text-xs">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono font-bold text-white text-sm">${code}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full ${isDepleted ? 'bg-rose-950 text-rose-400 border border-rose-500/30' : 'bg-emerald-950 text-emerald-400 border border-emerald-500/30'}">
+                                ${isDepleted ? 'Exhausted' : 'Active'}
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">
+                            Claims: <strong class="text-white">${used}</strong> / ${d.maxLimit} · Reward: <strong class="text-emerald-400">৳${d.amount}</strong>
+                        </p>
+                    </div>
+                </div>
+                <button onclick="deleteGiftCode('${code}')" class="p-2 text-slate-500 hover:text-rose-400 transition" title="Delete voucher">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+    });
+    list.innerHTML = html;
+}
+
+function deleteGiftCode(code) {
+    openActionModal({
+        title: `Delete Voucher ${code}`,
+        content: `Players will no longer be able to claim this gift code.`,
+        onConfirm: () => {
+            db.ref('gift_codes/' + code).remove().then(() => {
+                showToast(`Code ${code} deleted`, "success");
+            });
+        }
+    });
+}
+
+// 4. Site Settings
+function saveAdminNumbers() {
+    const bk = document.getElementById('setBkashNum').value.trim();
+    const ng = document.getElementById('setNagadNum').value.trim();
+
+    db.ref('admin_settings/deposit_numbers').update({
+        Bkash: bk,
+        Nagad: ng
+    }).then(() => {
+        showToast("Gateway receiving numbers updated", "success");
+    });
+}
+
+function savePopupSettings() {
+    const msg = document.getElementById('setPopupMsg').value.trim();
+    const active = document.getElementById('setPopupActive').checked;
+
+    db.ref('admin_settings').update({
+        popup_message: msg,
+        popup_active: active
+    }).then(() => {
+        showToast("Announcement settings committed", "success");
+    });
+}
+
+// 5. Notifications
+function sendNotification() {
+    const t = document.getElementById('notifTitle').value.trim();
+    const b = document.getElementById('notifBody').value.trim();
+
+    if (!t || !b) {
+        showToast("Please provide both subject and body", "error");
+        return;
+    }
+
+    db.ref('admin_notifications').push({
+        title: t,
+        message: b,
+        timestamp: Date.now()
+    }).then(() => {
+        showToast("Broadcast pushed to all players", "success");
+        document.getElementById('notifTitle').value = '';
+        document.getElementById('notifBody').value = '';
+    });
+}
+</script>
+</body>
+</html>

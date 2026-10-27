@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Aviator Professional – Official Spribe Engine</title>
+    <link rel="preload" href="https://www.image2url.com/r2/default/share/q82WaFO6Rg4k7ZPv69fCP/1790483127482-d28eb6a7-355e-44d3-80e8-afcba27ede74.png" as="image" />
+    <link rel="preload" href="https://www.image2url.com/r2/default/share/gcys2OAMUOWFFQSA71QnG/1790483186795-43483ae9-3a74-4137-90e7-38f0ec23b412.png" as="image" />
+    <link rel="preload" href="https://www.image2url.com/r2/default/share/uOJFbnDjpaatJe9DBb42b/1790483231741-bc39fc4a-450c-4d7f-9642-a474fa4a6534.png" as="image" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Firebase SDK (compat build) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    
+    <style>
+      /* Base & Spribe Engine Styles */
+      * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; margin: 0; padding: 0; box-sizing: border-box; }
+      body, html { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Roboto', 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; } 
+      .hidden-app { visibility: hidden; opacity: 0; width: 100%; min-height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; display: flex; justify-content: center; }
+      
+      #spribe-preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000000; display: flex; justify-content: center; align-items: center; z-index: 100000; } 
+      #spribe-preloader .main-container { display: flex; flex-direction: column; align-items: center; } 
+      #spribe-preloader .powered-by { color: #7a7a7a; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px; } 
+      #spribe-preloader .brand-section { display: flex; align-items: center; gap: 8px; } 
+      #spribe-preloader .s-logo { height: 45px; width: auto; object-fit: contain; } 
+      #spribe-preloader .text-section { display: flex; flex-direction: column; justify-content: center; } 
+      #spribe-preloader .brand-name { font-size: 30px; font-weight: 900; line-height: 1; letter-spacing: 1px; font-family: 'Impact', 'Arial Black', sans-serif; } 
+      #spribe-preloader .sub-text { font-size: 9px; color: #ffffff; margin-top: 4px; letter-spacing: 0.2px; font-weight: normal; } 
+      #spribe-preloader .loading-dots { display: flex; align-items: center; justify-content: center; margin-top: 35px; gap: 8px; } 
+      #spribe-preloader .dot { background-color: #ff0000; border-radius: 50%; opacity: 0.3; animation: loading-pulse 1.5s infinite ease-in-out; } 
+      #spribe-preloader .dot.small { width: 6px; height: 6px; } 
+      #spribe-preloader .dot.large { width: 12px; height: 12px; } 
+      #spribe-preloader .dot:nth-child(1) { animation-delay: 0s; } 
+      #spribe-preloader .dot:nth-child(2) { animation-delay: 0.3s; } 
+      #spribe-preloader .dot:nth-child(3) { animation-delay: 0.6s; } 
+      @keyframes loading-pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 6px rgba(255, 0, 0, 0.8); } }
+
+      body { background-color: #000; color: #fff; display: flex; justify-content: center; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+      img { pointer-events: none; }
+      .main-app-container { width: 100%; max-width: 480px; background: #000; display: flex; flex-direction: column; min-height: 100vh; position: relative; margin: 0 auto; }
+      .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background-color: #1b1c1d; height: 44px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #232425; }
+      .logo-container { display: flex; align-items: center; gap: 10px; }
+      .back-home-btn { background: #2b2c2f; border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+      .back-home-btn:hover { background: #3b3c40; }
+      .logo-img { height: 20px; width: auto; }
+      .header-right { display: flex; align-items: center; gap: 12px; }
+      .balance-area { display: flex; align-items: baseline; gap: 5px; cursor: pointer; background: #111112; padding: 4px 10px; border-radius: 16px; border: 1px solid #28292b; }
+      .amount { color: #35c332; font-size: 15px; font-weight: 900; letter-spacing: 0.5px; }
+      .currency { color: #a3a5a7; font-size: 13px; font-weight: 400; }
+      .icon-wrapper { display: flex; align-items: center; gap: 14px; }
+      .icon-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+      .icon-btn svg { width: 20px; height: 20px; stroke: #9e9e9e; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+      
+      .history-bar { display: flex; align-items: center; justify-content: space-between; background-color: #111112; padding: 6px 12px; border-top: 1px solid #232425; height: 32px; }
+      .history-items-container { flex: 1; overflow: hidden; mask-image: linear-gradient(to right, black 85%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%); }
+      .history-items { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+      .hist-item-wrapper { transition: margin-left 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease; display: inline-flex; align-items: center; }
+      .multiplier { font-size: 12.5px; font-weight: 700; letter-spacing: 0.3px; }
+      .color-blue { color: #34b4ff; } .color-purple { color: #913ef8; } .color-pink { color: #c017b2; }
+      .history-menu-btn { background-color: #313235; border: none; border-radius: 12px; padding: 0 9px; height: 22px; display: flex; align-items: center; justify-content: center; gap: 3px; cursor: pointer; margin-left: 8px; flex-shrink: 0; }
+      .history-menu-btn .dot { width: 3.5px; height: 3.5px; background-color: #d1d1d1; border-radius: 50%; }
+      
+      .menu-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 6000; }
+      .menu-container { position: absolute; top: 50px; right: 10px; width: 340px; max-width: 90%; background-color: #1c1c1e; border-radius: 12px; overflow: hidden; color: #e0e0e0; box-shadow: 0 10px 25px rgba(0,0,0,0.8); animation: menuScaleIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: top right; }
+      @keyframes menuScaleIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+      .menu-header { display: flex; align-items: center; padding: 14px; background-color: #242426; border-bottom: 6px solid #1c1c1e; }
+      .avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; margin-right: 12px; background-color: #333; }
+      .user-info { display: flex; align-items: center; }
+      .user-id-wrapper { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+      .user-id { font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: 0.5px; }
+      .copy-icon { width: 16px; height: 16px; fill: transparent; stroke: #888; stroke-width: 2; pointer-events: none; }
+      .change-avatar-btn { background: transparent; border: 1px solid #4a4a4c; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; cursor: pointer; margin-left: auto; }
+      .change-avatar-btn svg { width: 16px; height: 16px; fill: #8e8e93; pointer-events: none; }
+      .btn-text { color: #8e8e93; font-size: 10px; line-height: 1.2; text-align: left; }
+      .menu-list { display: flex; flex-direction: column; background-color: #242426; }
+      .menu-item { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #2c2c2e; cursor: pointer; }
+      .menu-item:last-child { border-bottom: none; }
+      .item-icon { width: 18px; height: 18px; fill: transparent; stroke: #8e8e93; stroke-width: 1.5; margin-right: 14px; pointer-events: none; }
+      .item-text { flex: 1; font-size: 14px; color: #ffffff; font-weight: 400; }
+      .menu-item .toggle-switch { position: relative; width: 40px; height: 22px; appearance: none; background-color: #1a1a1c; border-radius: 12px; outline: none; cursor: pointer; }
+      .menu-item .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background-color: #3a3a3c; border-radius: 50%; transition: 0.2s; }
+      .menu-item .toggle-switch:checked { background-color: #3a3a3c; }
+      .menu-item .toggle-switch:checked::after { transform: translateX(18px); background-color: #d1d1d6; }
+
+      @keyframes slideInRight { 0% { opacity: 0; transform: translateX(50px); } 100% { opacity: 1; transform: translateX(0); } }
+      @keyframes fadeOutUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } }
+      .telegram-popup { position: fixed; top: 60px; right: 20px; background: linear-gradient(90deg, #1c2e4a 0%, #1583d8 100%); border: 1px solid #2da5ff; border-radius: 30px; padding: 8px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); z-index: 10000; animation: slideInRight 0.3s ease-out forwards, fadeOutUp 0.3s ease-in 4.7s forwards; white-space: nowrap; cursor: pointer; }
+      .telegram-popup svg { width: 20px; height: 20px; fill: #fff; pointer-events: none; }
+      .telegram-popup span { color: #fff; font-weight: 600; font-size: 13px; }
+
+      #notification-area { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 95%; max-width: 420px; pointer-events: none; }
+      .popup-anim { animation: popupSlideDown 0.3s ease-out forwards; pointer-events: auto; }
+      @keyframes popupSlideDown { 0% { opacity: 0; transform: translateY(-20px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+      .error-popup { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(90deg, #1b1313 0%, #3d1212 100%); border: 2px solid #b71c1c; border-radius: 50px; padding: 3px 5px 3px 20px; width: 100%; height: 46px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); }
+      .error-popup .text-message { color: #e0e0e0; font-size: 14px; font-weight: 500; }
+      .error-popup .close-btn { background-color: #4a1616; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+      .error-popup .close-btn svg { width: 18px; height: 18px; fill: #ffffff; }
+
+      .cashout-popup { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(90deg, #1c1a1b 0%, #203318 100%); border: 2px solid #1a5e20; border-radius: 50px; padding: 3px 5px 3px 20px; width: 100%; height: 48px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); }
+      .cashout-popup .left-section { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.1; margin-right: 12px; }
+      .cashout-popup .text-top { color: #a8a8a8; font-size: 11px; margin-bottom: 2px; }
+      .cashout-popup .text-bottom { color: #ffffff; font-size: 16px; font-weight: 700; }
+      .cashout-popup .right-section { display: flex; align-items: center; gap: 5px; height: 100%; }
+      .cashout-popup .win-badge { background-color: #568b2f; border-radius: 40px; padding: 0 24px; height: 100%; min-width: 100px; position: relative; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; line-height: 1.1; }
+      .cashout-popup .win-text-top { color: #ffffff; font-size: 11px; font-weight: 600; z-index: 2; }
+      .cashout-popup .win-text-bottom { color: #ffffff; font-size: 16px; font-weight: 800; z-index: 2; }
+      .cashout-popup .close-btn { background-color: #304e25; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+      .cashout-popup .close-btn svg { width: 18px; height: 18px; fill: #ffffff; }
+
+      .history-popup-container { display: none; position: absolute; top: 85px; left: 10px; right: 10px; background: #1b1c1d; border-radius: 12px; border: 1px solid #2b2b2c; z-index: 5000; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.8); }
+      .history-popup-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
+      .history-popup-title { color: #9ea0a3; font-size: 13px; font-weight: 500; }
+      .history-popup-close { width: 22px; height: 22px; background: #2b2b2c; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #9ea0a3; font-size: 11px; }
+      .history-popup-grid { display: flex; flex-wrap: wrap; padding: 0 8px 12px 8px; align-content: flex-start; }
+      .history-grid-wrapper { width: 16.666%; padding: 6px 3px; text-align: center; }
+      .history-grid-item { font-size: 12px; font-weight: 700; }
+
+      .game-screen-wrapper { padding: 8px 10px; background: #000; }
+      .game-screen { width: 100%; height: 230px; background: #000; position: relative; overflow: hidden; border: 2px solid #1a1a1a; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+      #round-loader { position: absolute; width: 100%; height: 100%; z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; }
+      #loader-plane { position: absolute; bottom: 10px; left: 10px; width: 85px; z-index: 15; transform: rotate(-5deg); pointer-events: none; }
+      .ray { position: absolute; width: 400vw; height: 400vw; bottom: -200vw; left: -200vw; background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(30, 30, 30, 1) 0deg 6deg, rgba(15, 15, 15, 1) 6deg 12deg); transform-origin: 50% 50%; z-index: 1; pointer-events: none; }
+      .ray1 { animation: rays-flow-1 20s linear infinite; }
+      @keyframes rays-flow-1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      .corner-glow { position: absolute; bottom: -20px; left: -20px; width: 150px; height: 150px; background: radial-gradient(circle at center, rgba(60, 60, 60, 0.1) 0%, transparent 70%); z-index: 3; pointer-events: none; }
+      .overlay-fix { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 0% 100%, transparent 10%, rgba(0, 0, 0, 0.8) 100%); z-index: 2; pointer-events: none; }
+      .multiplier-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 130px; border-radius: 50%; z-index: 5; pointer-events: none; filter: blur(35px); display: none; }
+      .center-ui { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+      #flew-away { color: #fff; font-size: 26px; font-weight: 500; display: none; text-transform: uppercase; letter-spacing: 1.5px; position: relative; z-index: 101; }
+      #multiplier { font-size: 74px; font-weight: 900; color: #fff; position: relative; z-index: 101; display: none; letter-spacing: -2px; line-height: 1; font-variant-numeric: tabular-nums; }
+      canvas { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+      #plane-wrap { position: absolute; left: 0; top: 0; width: 85px; z-index: 30; pointer-events: none; opacity: 0; will-change: transform; }
+      #plane-img { width: 100%; }
+      
+      .in-game-counter { position: absolute; bottom: 10px; right: 10px; background: rgba(20, 21, 22, 0.7); border-radius: 20px; padding: 3px 10px 3px 4px; display: flex; align-items: center; gap: 6px; z-index: 2005; border: 1px solid rgba(255,255,255,0.05); }
+      .igc-avatars { display: flex; }
+      .igc-avatars img { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #28a909; object-fit: cover; margin-right: -6px; }
+      .igc-text { color: #fff; font-size: 13px; font-weight: 700; }
+
+      .panels-container { width: 100%; padding: 0 10px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+      .bet-panel { background: #18191b; border-radius: 14px; padding: 10px; position: relative; }
+      .tabs-container { display: flex; justify-content: center; position: relative; margin-bottom: 8px; }
+      .tabs { display: flex; background: #0f1011; padding: 3px; border-radius: 18px; width: 180px; }
+      .tab { flex: 1; text-align: center; padding: 5px 0; font-size: 13px; color: #9ea0a3; cursor: pointer; border-radius: 14px; transition: all 0.2s; }
+      .tab.active { background: #2c2d30; color: #fff; font-weight: bold; }
+      .panel-body { display: flex; gap: 8px; align-items: stretch; }
+      .controls-left { width: 38%; display: flex; flex-direction: column; justify-content: space-between; }
+      .controls-right { width: 62%; }
+      .input-box { background: #0a0b0c; border-radius: 18px; height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 3px; margin-bottom: 6px; border: 1px solid #1f2022; }
+      .ctrl-btn { width: 24px; height: 24px; background-color: #2e2e33; color: #fff; border: none; border-radius: 50%; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+      .bet-input { background: transparent; border: none; color: #fff; text-align: center; width: 100%; font-weight: 700; font-size: 15px; outline: none; }
+      .stakes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      .stake-btn { background: #111214; border-radius: 8px; font-size: 12px; padding: 4px 0; color: #7b7d80; border: none; cursor: pointer; }
+      .action-btn { width: 100%; height: 100%; min-height: 76px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; outline: none; }
+      .action-btn:active { transform: scale(0.97); }
+      .btn-bet { background-color: #31a91b; border-color: #96f26d; }
+      .btn-cancel { background-color: #ce111b; border-color: #f79b9b; }
+      .btn-cashout { background-color: #d17a15; border-color: #f6b36e; }
+      .txt-top { font-weight: 700; font-size: 22px; color: #fff; text-transform: capitalize; }
+      .txt-sub { font-weight: 700; font-size: 16px; color: #fff; margin-top: 1px; }
+
+      .auto-controls { display: none; border-top: 1px solid #202124; padding-top: 8px; margin-top: 8px; }
+      .auto-controls.active { display: flex; justify-content: space-between; align-items: center; }
+      .auto-group { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #9ea0a3; }
+      .toggle-switch-bet { position: relative; display: inline-block; width: 34px; height: 18px; }
+      .toggle-switch-bet input { opacity: 0; width: 0; height: 0; }
+      .toggle-slider-bet { position: absolute; cursor: pointer; inset: 0; background-color: #1a1b1d; transition: .3s; border-radius: 18px; }
+      .toggle-slider-bet:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: #454648; transition: .3s; border-radius: 50%; }
+      .toggle-switch-bet input:checked + .toggle-slider-bet { background-color: #31a91b; }
+      .toggle-switch-bet input:checked + .toggle-slider-bet:before { background-color: #fff; transform: translateX(16px); }
+      .auto-mul-box { display: flex; align-items: center; background: #1a1b1d; border-radius: 12px; height: 24px; padding: 0 8px; }
+      .auto-mul-box input { background: transparent; border: none; color: #fff; width: 36px; text-align: center; font-size: 12px; font-weight: bold; outline: none; }
+
+      .list-panel-container { background-color: #1b1c1d; width: 100%; display: flex; flex-direction: column; height: 420px; border-radius: 12px 12px 0 0; }
+      .list-tabs-wrapper { padding: 10px 14px; background-color: #1b1c1d; }
+      .list-tabs-container { display: flex; background-color: #141516; border-radius: 24px; padding: 2px; }
+      .list-tab { flex: 1; text-align: center; padding: 6px 0; font-size: 12px; font-weight: 600; color: #8c8c8c; border-radius: 20px; cursor: pointer; }
+      .list-tab.active { background-color: #2c2d30; color: #ffffff; }
+      .list-tab-content { display: none; flex-direction: column; flex: 1; min-height: 0; background-color: #1b1c1d; }
+      .list-tab-content.active-content { display: flex; }
+      .list-header { display: grid; grid-template-columns: 120px 80px 50px 1fr; padding: 6px 14px; font-size: 11px; color: #7b7b7b; }
+      .list-header div:nth-child(3) { text-align: center; } .list-header div:nth-child(4) { text-align: right; }
+      .scrollable-list { padding: 0 10px; display: flex; flex-direction: column; gap: 3px; flex: 1; overflow-y: auto; padding-bottom: 15px; }
+      .bet-row { display: grid; grid-template-columns: 120px 80px 50px 1fr; align-items: center; background-color: #0e0f10; border-radius: 20px; padding: 3px 12px 3px 6px; font-size: 12px; border: 1px solid transparent; }
+      .bet-row.won { background-color: #1c2e17; border-color: #285420; }
+      .user-icon { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+      .win-amount { color: #8cc63f; font-weight: 600; text-align: right; }
+      .footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background-color: #1b1c1d; border-top: 1px solid #232426; font-size: 11px; color: #6c6c6c; }
+    </style>
+  </head>
+  <body>
+    <!-- Spribe Preloader -->
+    <div id="spribe-preloader">
+      <div class="main-container">
+        <div class="powered-by">POWERED BY</div>
+        <div class="brand-section">
+          <img src="https://ariyanonline.page.gd/logo.png" alt="S Logo" class="s-logo" />
+          <div class="text-section">
+            <div class="brand-name">𝗦𝗣𝗥𝗜𝗕𝗘</div>
+            <div class="sub-text">INSIGHTFUL ENTERTAINMENT</div>
+          </div>
+        </div>
+        <div class="loading-dots">
+          <div class="dot small"></div>
+          <div class="dot large"></div>
+          <div class="dot small"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real Aviator Application Container -->
+    <div id="real-app" class="hidden-app">
+      <div class="main-app-container" id="main-container">
+        <div id="notification-area"></div>
+        
+        <!-- Top Navigation Bar -->
+        <div class="top-bar">
+          <div class="logo-container">
+            <button onclick="returnToHome()" class="back-home-btn" title="Back to Platform Home">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <img src="https://www.image2url.com/r2/default/share/uOJFbnDjpaatJe9DBb42b/1790483231741-bc39fc4a-450c-4d7f-9642-a474fa4a6534.png" alt="Aviator Logo" class="logo-img" />
+          </div>
+          <div class="header-right">
+            <div class="balance-area" onclick="copyUserID(true)" title="Balance / Click to Copy UID">
+              <span class="amount" id="user-balance-amount">0.00</span>
+              <span class="currency">৳ BDT</span>
+            </div>
+            <div class="icon-wrapper">
+              <button class="icon-btn" onclick="openMenu()">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+              </button>
+              <button class="icon-btn" onclick="showTelegramPopup()">
+                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Bar -->
+        <div class="history-bar">
+          <div class="history-items-container">
+            <div class="history-items" id="history-bar"></div>
+          </div>
+          <button class="history-menu-btn" onclick="openHistoryPopup()">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </button>
+        </div>
+
+        <!-- History Popup -->
+        <div class="history-popup-container" id="historyPopup">
+          <div class="history-popup-header">
+            <div class="history-popup-title">Round Multiplier History</div>
+            <div class="history-popup-close" onclick="closeHistoryPopup()">✕</div>
+          </div>
+          <div class="history-popup-grid" id="history-popup-grid"></div>
+        </div>
+
+        <!-- Settings Drawer Menu -->
+        <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()">
+          <div class="menu-container" id="menuPopup" onclick="event.stopPropagation()">
+            <div class="menu-header">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aviator" class="avatar" id="avatarImg" alt="User Avatar" />
+              <div class="user-info">
+                <div class="user-id-wrapper" onclick="copyUserID()">
+                  <span class="user-id" id="userIdText">...</span>
+                  <svg class="copy-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </div>
+              </div>
+              <button class="change-avatar-btn" onclick="returnToHome()">
+                <div class="btn-text">Return to<br>Home Page</div>
+              </button>
+            </div>
+            <div class="menu-list">
+              <label class="menu-item">
+                <svg class="item-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <span class="item-text">Sound Effects</span>
+                <input type="checkbox" class="toggle-switch" id="toggle-sound-chk" checked />
+              </label>
+              <label class="menu-item">
+                <svg class="item-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                <span class="item-text">Flight Music</span>
+                <input type="checkbox" class="toggle-switch" id="toggle-music-chk" checked />
+              </label>
+              <label class="menu-item">
+                <svg class="item-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 8 14"></polyline></svg>
+                <span class="item-text">Return to Main App</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen-wrapper">
+          <div class="game-screen">
+            <div class="multiplier-glow" id="multiplier-glow"></div>
+            
+            <div id="round-loader">
+              <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center;">
+                <div style="margin-bottom: 6px;">
+                  <img src="https://www.image2url.com/r2/default/share/gcys2OAMUOWFFQSA71QnG/1790483186795-43483ae9-3a74-4137-90e7-38f0ec23b412.png" style="width:130px; border-radius: 8px;" />
+                </div>
+                <div style="width:220px; height:5px; background:#2a2a2b; border-radius:3px; overflow:hidden; margin-top: 5px; margin-bottom: 10px;">
+                  <div id="l-fill" style="width:100%; height:100%; background:#e10512; border-radius:3px;"></div>
+                </div>
+              </div>
+              <img id="loader-plane" src="https://www.image2url.com/r2/default/share/q82WaFO6Rg4k7ZPv69fCP/1790483127482-d28eb6a7-355e-44d3-80e8-afcba27ede74.png" />
+            </div>
+
+            <div id="stage" style="display:block; width:100%; height:100%;">
+              <div class="ray ray1" id="bg-ray1"></div>
+              <div class="corner-glow" id="corner-glow-bg"></div>
+              <div class="overlay-fix" id="overlay-fix-bg"></div>
+              
+              <div class="center-ui">
+                <div id="flew-away">FLEW AWAY!</div>
+                <div id="multiplier">1.00x</div>
+              </div>
+
+              <div id="plane-wrap">
+                <img id="plane-img" src="https://www.image2url.com/r2/default/share/q82WaFO6Rg4k7ZPv69fCP/1790483127482-d28eb6a7-355e-44d3-80e8-afcba27ede74.png" />
+              </div>
+
+              <div class="in-game-counter" id="in-game-counter">
+                <div class="igc-avatars">
+                  <img src="https://i.pravatar.cc/100?img=33" alt="u1" />
+                  <img src="https://i.pravatar.cc/100?img=12" alt="u2" />
+                  <img src="https://i.pravatar.cc/100?img=11" alt="u3" />
+                </div>
+                <span class="igc-text" id="igc-count">0</span>
+              </div>
+              <canvas id="gameCanvas"></canvas>
+            </div>
+
+            <audio id="bgm" loop src="https://ariyan.online/background.mp3"></audio>
+            <audio id="crash" src="https://ariyan.online/plane-crash.mp3"></audio>
+            <audio id="start-sfx" src="https://ariyan.online/game-start.mp3"></audio>
+            <audio id="cashout-sfx" src="https://ariyan.online/cashout.mp3"></audio>
+            <div id="audio-trigger" style="position:fixed; inset:0; z-index:9999; background:transparent;"></div>
+          </div>
+        </div>
+
+        <!-- Betting Dual Panels -->
+        <div class="panels-container">
+          <!-- Panel 1 -->
+          <div class="bet-panel" id="panel-1">
+            <div class="tabs-container">
+              <div class="tabs">
+                <div class="tab active" onclick="switchTab(1, 'bet')">Bet</div>
+                <div class="tab" onclick="switchTab(1, 'auto')">Auto</div>
+              </div>
+            </div>
+            <div class="panel-body" id="bet-controls-1">
+              <div class="controls-left">
+                <div class="input-box">
+                  <button class="ctrl-btn" onclick="step(1, -1)">−</button>
+                  <input type="number" id="val-1" class="bet-input" value="10.00" step="1.00" />
+                  <button class="ctrl-btn" onclick="step(1, 1)">+</button>
+                </div>
+                <div class="stakes-grid">
+                  <button class="stake-btn" onclick="set(1, '100')">100</button>
+                  <button class="stake-btn" onclick="set(1, '200')">200</button>
+                  <button class="stake-btn" onclick="set(1, '500')">500</button>
+                  <button class="stake-btn" onclick="set(1, '1000')">1,000</button>
+                </div>
+              </div>
+              <div class="controls-right">
+                <button class="action-btn btn-bet" id="btn-1" onclick="handle(1)">
+                  <span class="txt-top" id="lbl-1">Bet</span>
+                  <span class="txt-sub" id="sub-1">10.00 ৳</span>
+                </button>
+              </div>
+            </div>
+            <div class="auto-controls" id="auto-controls-1">
+              <div class="auto-group">
+                <span>Auto bet</span>
+                <label class="toggle-switch-bet">
+                  <input type="checkbox" id="auto-bet-1" onchange="toggleAutoBet(1)" />
+                  <span class="toggle-slider-bet"></span>
+                </label>
+              </div>
+              <div class="auto-group">
+                <span>Auto Cash Out</span>
+                <label class="toggle-switch-bet">
+                  <input type="checkbox" id="auto-cashout-toggle-1" onchange="toggleAutoCashOut(1)" />
+                  <span class="toggle-slider-bet"></span>
+                </label>
+                <div class="auto-mul-box">
+                  <input type="number" id="auto-cashout-value-1" value="2.00" step="0.1" min="1.10" max="50.00" />
+                  <span>×</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel 2 -->
+          <div class="bet-panel" id="panel-2">
+            <div class="tabs-container">
+              <div class="tabs">
+                <div class="tab active" onclick="switchTab(2, 'bet')">Bet</div>
+                <div class="tab" onclick="switchTab(2, 'auto')">Auto</div>
+              </div>
+            </div>
+            <div class="panel-body" id="bet-controls-2">
+              <div class="controls-left">
+                <div class="input-box">
+                  <button class="ctrl-btn" onclick="step(2, -1)">−</button>
+                  <input type="number" id="val-2" class="bet-input" value="10.00" step="1.00" />
+                  <button class="ctrl-btn" onclick="step(2, 1)">+</button>
+                </div>
+                <div class="stakes-grid">
+                  <button class="stake-btn" onclick="set(2, '100')">100</button>
+                  <button class="stake-btn" onclick="set(2, '200')">200</button>
+                  <button class="stake-btn" onclick="set(2, '500')">500</button>
+                  <button class="stake-btn" onclick="set(2, '1000')">1,000</button>
+                </div>
+              </div>
+              <div class="controls-right">
+                <button class="action-btn btn-bet" id="btn-2" onclick="handle(2)">
+                  <span class="txt-top" id="lbl-2">Bet</span>
+                  <span class="txt-sub" id="sub-2">10.00 ৳</span>
+                </button>
+              </div>
+            </div>
+            <div class="auto-controls" id="auto-controls-2">
+              <div class="auto-group">
+                <span>Auto bet</span>
+                <label class="toggle-switch-bet">
+                  <input type="checkbox" id="auto-bet-2" onchange="toggleAutoBet(2)" />
+                  <span class="toggle-slider-bet"></span>
+                </label>
+              </div>
+              <div class="auto-group">
+                <span>Auto Cash Out</span>
+                <label class="toggle-switch-bet">
+                  <input type="checkbox" id="auto-cashout-toggle-2" onchange="toggleAutoCashOut(2)" />
+                  <span class="toggle-slider-bet"></span>
+                </label>
+                <div class="auto-mul-box">
+                  <input type="number" id="auto-cashout-value-2" value="2.00" step="0.1" min="1.10" max="50.00" />
+                  <span>×</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Bets & Previous History -->
+        <div class="list-panel-container">
+          <div class="list-tabs-wrapper">
+            <div class="list-tabs-container" id="listTabs">
+              <div class="list-tab active" data-target="all-bets">All Bets</div>
+              <div class="list-tab" data-target="previous">Previous</div>
+              <div class="list-tab" data-target="top">Top Wins</div>
+            </div>
+          </div>
+          <div id="all-bets" class="list-tab-content active-content">
+            <div class="list-header">
+              <div style="text-align:left; padding-left:8px;">Player</div>
+              <div>Bet ৳</div>
+              <div>X</div>
+              <div>Win ৳</div>
+            </div>
+            <div class="scrollable-list" id="allBetsList"></div>
+          </div>
+          <div id="previous" class="list-tab-content">
+            <div class="list-header">
+              <div style="text-align:left; padding-left:8px;">Player</div>
+              <div>Bet ৳</div>
+              <div>X</div>
+              <div>Win ৳</div>
+            </div>
+            <div class="scrollable-list" id="previousList"></div>
+          </div>
+          <div id="top" class="list-tab-content">
+            <div class="scrollable-list" id="topCardsList" style="padding-top:10px;"></div>
+          </div>
+          <div class="footer">
+            <div class="provably-fair">Provably Fair Verified</div>
+            <div class="powered-by">Powered by <strong>SPRIBE</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         INTEGRATED FIREBASE ENGINE & GAME LOGIC
+         ============================================================ -->
+    <script>
+    // 1. Primary Platform Firebase Connection
+    const firebaseConfig = {
+      apiKey: "AIzaSyBGaFtX-4JYrW_rhKLn--_hHgo1I2UdGGE",
+      authDomain: "luckyspin-5ff98.firebaseapp.com",
+      databaseURL: "https://luckyspin-5ff98-default-rtdb.firebaseio.com",
+      projectId: "luckyspin-5ff98",
+      storageBucket: "luckyspin-5ff98.firebasestorage.app",
+      messagingSenderId: "653880368423",
+      appId: "1:653880368423:web:5efc8fc2f06d0bd7765d02",
+      measurementId: "G-BK1VH2ZFG8"
+    };
+
+    let db = null;
+    let userRef = null;
+    let adminControlRef = null;
+    let currentLoggedUserPhone = localStorage.getItem('bd99_user') || '01700000000';
+    let userRecord = null;
+    let balance = 0.00;
+
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.database();
+        userRef = db.ref('users/' + currentLoggedUserPhone);
+        adminControlRef = db.ref('admin_control/aviator_data');
+    } catch (e) {
+        console.warn("Firebase initial load:", e);
+    }
+
+    // Connect user and live balance
+    function syncUser() {
+        if (!userRef) return;
+        userRef.on('value', snap => {
+            if (snap.exists()) {
+                userRecord = snap.val();
+                balance = parseFloat(userRecord.balance || 0);
+                document.getElementById('user-balance-amount').innerText = balance.toFixed(2);
+                document.getElementById('userIdText').innerText = userRecord.uid || currentLoggedUserPhone;
+                if (userRecord.avatar) document.getElementById('avatarImg').src = userRecord.avatar;
+            }
+        });
+    }
+
+    function returnToHome() {
+        const bgmAudio = document.getElementById('bgm');
+        if (bgmAudio) bgmAudio.pause();
+        const flyAudio = document.getElementById('start-sfx');
+        if (flyAudio) flyAudio.pause();
+        
+        // If loaded within an iframe in AVVV.html or index.html
+        if (window.parent && window.parent !== window && typeof window.parent.closeAviatorGame === 'function') {
+            window.parent.closeAviatorGame();
+        } else {
+            window.location.href = "/";
+        }
+    }
+
+    // Game variables
+    let soundEnabled = true; let musicEnabled = true; let animEnabled = true;
+    let simulatedBets = []; let totalWinBDT = 0;
+    const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
+    const plane = document.getElementById('plane-wrap'); const multTxt = document.getElementById('multiplier');
+    const flewTxt = document.getElementById('flew-away'); const loader = document.getElementById('round-loader');
+    const lFill = document.getElementById('l-fill'); const crashSfx = document.getElementById('crash');
+    const startSfx = document.getElementById('start-sfx'); const multiplierGlow = document.getElementById('multiplier-glow');
+
+    let cw = 0, ch = 0; let serverOffset = 0, state = 'loading', roundStart = 0, crashAt = 1.00;
+    let soundPlayed = false, crashSoundPlayed = false, currentVal = 1.00;
+    let localLoadingStartMs = 0, initialLoadingProgress = 0;
+    const totalLoadingTime = 5.5;
+    let frontendStartTime = 0; let initialJoinOffsetSec = 0;
+    let lastTx = 0, lastTy = 0;
+    let extendedHistory = [1.25, 4.20, 2.15, 1.09, 3.80, 5.50, 1.30, 2.05];
+
+    let p = { 
+        1: { status: 'IDLE', bet: 10.00, locked: 0, autoBetEnabled: false, autoCashOutEnabled: false, autoCashOutValue: 2.00 }, 
+        2: { status: 'IDLE', bet: 10.00, locked: 0, autoBetEnabled: false, autoCashOutEnabled: false, autoCashOutValue: 2.00 } 
+    };
+
+    // Controls
+    function validate(id) {
+        let el = document.getElementById('val-'+id); let v = parseFloat(el.value);
+        if (isNaN(v) || v < 1) v = 10;
+        el.value = v.toFixed(2); p[id].bet = v;
+        if (p[id].status === 'IDLE') document.getElementById('sub-'+id).innerHTML = v.toFixed(2) + ' ৳';
+    }
+
+    function step(id, delta) {
+        let el = document.getElementById('val-'+id);
+        let v = (parseFloat(el.value) || 10) + delta * 5;
+        if (v < 1) v = 1;
+        el.value = v.toFixed(2); validate(id);
+    }
+
+    function set(id, val) {
+        document.getElementById('val-'+id).value = parseFloat(val).toFixed(2); validate(id);
+    }
+
+    function switchTab(panelId, mode) {
+        const panel = document.getElementById('panel-' + panelId);
+        const currentTabs = panel.querySelectorAll('.tab');
+        const autoControls = document.getElementById('auto-controls-' + panelId);
+        currentTabs.forEach(t => t.classList.remove('active'));
+        if (mode === 'bet') {
+            currentTabs[0].classList.add('active');
+            autoControls.classList.remove('active');
+        } else {
+            currentTabs[1].classList.add('active');
+            autoControls.classList.add('active');
+        }
+    }
+
+    function toggleAutoBet(panelId) { p[panelId].autoBetEnabled = document.getElementById('auto-bet-' + panelId).checked; }
+    function toggleAutoCashOut(panelId) { p[panelId].autoCashOutEnabled = document.getElementById('auto-cashout-toggle-' + panelId).checked; }
+
+    function handle(id) {
+        validate(id);
+        const betAmount = parseFloat(document.getElementById('val-' + id).value);
+        let s = p[id];
+        let btn = document.getElementById('btn-'+id);
+        let lbl = document.getElementById('lbl-'+id);
+        let sub = document.getElementById('sub-'+id);
+
+        if (s.status === 'IDLE') {
+            if (balance < betAmount) { displayNotice("Not enough balance"); return; }
+            balance -= betAmount;
+            document.getElementById('user-balance-amount').innerText = balance.toFixed(2);
+
+            // Deduct in Firebase
+            if (userRef) {
+                userRef.child('balance').transaction(cur => {
+                    let b = (typeof cur === 'number') ? cur : 0;
+                    return Math.max(0, b - betAmount);
+                });
+                userRef.child('wager_left').transaction(cur => {
+                    let w = (typeof cur === 'number') ? cur : 0;
+                    return Math.max(0, w - betAmount);
+                });
+            }
+
+            let isCurrentlyLoading = state === 'loading' || state === 'crashed';
+            if (isCurrentlyLoading) {
+                s.status = 'READY'; s.locked = betAmount;
+                btn.className = "action-btn btn-cancel"; lbl.innerText = "Cancel"; sub.innerHTML = betAmount.toFixed(2) + ' ৳';
+            } else {
+                s.status = 'WAIT'; s.locked = betAmount;
+                btn.className = "action-btn btn-cancel"; lbl.innerText = "Cancel"; sub.innerHTML = 'Waiting next round';
+            }
+        } else if (s.status === 'READY' || s.status === 'WAIT') {
+            balance += s.locked;
+            document.getElementById('user-balance-amount').innerText = balance.toFixed(2);
+            if (userRef) userRef.child('balance').transaction(cur => (cur || 0) + s.locked);
+
+            s.status = 'IDLE'; s.locked = 0;
+            btn.className = "action-btn btn-bet"; lbl.innerText = "Bet"; sub.innerHTML = p[id].bet.toFixed(2) + ' ৳';
+        } else if (s.status === 'ACTIVE') {
+            let winAmount = s.locked * currentVal;
+            balance += winAmount;
+            document.getElementById('user-balance-amount').innerText = balance.toFixed(2);
+
+            // Credit in Firebase
+            if (userRef) {
+                userRef.child('balance').transaction(cur => (cur || 0) + winAmount);
+                // Log win transaction
+                userRef.child('transactions').push({
+                    type: 'Aviator Win',
+                    amount: winAmount,
+                    method: 'Game',
+                    status: 'Complete',
+                    date: new Date().toLocaleString(),
+                    timestamp: Date.now()
+                });
+            }
+
+            s.status = 'IDLE'; s.locked = 0;
+            if (soundEnabled) {
+                const cashSfx = document.getElementById('cashout-sfx');
+                if (cashSfx) { cashSfx.currentTime = 0; cashSfx.play().catch(()=>{}); }
+            }
+            btn.className = "action-btn btn-bet"; lbl.innerText = "Bet"; sub.innerHTML = p[id].bet.toFixed(2) + ' ৳';
+            showCashoutPopup(currentVal, winAmount);
+        }
+    }
+
+    function checkCashouts() {
+        for (let id in p) {
+            if (state === 'flying' && p[id].status === 'READY') {
+                p[id].status = 'ACTIVE';
+                let btn = document.getElementById('btn-'+id);
+                btn.className = "action-btn btn-cashout";
+                document.getElementById('lbl-'+id).innerText = "Cash Out";
+            }
+            if (p[id].status === 'ACTIVE') {
+                let win = p[id].locked * currentVal;
+                document.getElementById('sub-'+id).innerHTML = win.toFixed(2) + ' ৳';
+                if (p[id].autoCashOutEnabled) {
+                    let autoVal = parseFloat(document.getElementById('auto-cashout-value-' + id).value);
+                    if (currentVal >= autoVal) handle(id);
+                }
+            }
+        }
+    }
+
+    function resetBets() {
+        for (let id in p) {
+            if (p[id].status === 'ACTIVE') {
+                p[id].status = 'IDLE'; p[id].locked = 0;
+                let btn = document.getElementById('btn-'+id);
+                btn.className = "action-btn btn-bet";
+                document.getElementById('lbl-'+id).innerText = "Bet";
+                document.getElementById('sub-'+id).innerHTML = p[id].bet.toFixed(2) + ' ৳';
+            } else if (p[id].status === 'WAIT') {
+                p[id].status = 'READY';
+                let btn = document.getElementById('btn-'+id);
+                btn.className = "action-btn btn-cancel";
+                document.getElementById('lbl-'+id).innerText = "Cancel";
+                document.getElementById('sub-'+id).innerHTML = p[id].locked.toFixed(2) + ' ৳';
+            }
+        }
+    }
+
+    function displayNotice(msg) {
+        const notifArea = document.getElementById('notification-area');
+        const popup = document.createElement('div');
+        popup.className = 'popup-anim';
+        popup.innerHTML = `<div class="error-popup"><div class="text-message">${msg}</div><button class="close-btn" onclick="this.closest('.popup-anim').remove()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>`;
+        notifArea.appendChild(popup);
+        setTimeout(() => { if (popup.parentElement) popup.remove(); }, 3000);
+    }
+
+    function showCashoutPopup(multiplier, amount) {
+        const notifArea = document.getElementById('notification-area');
+        const popup = document.createElement('div');
+        popup.className = 'popup-anim';
+        popup.innerHTML = `<div class="cashout-popup"><div class="left-section"><div class="text-top">Cashed Out!</div><div class="text-bottom">${multiplier.toFixed(2)}x</div></div><div class="right-section"><div class="win-badge"><div class="win-text-top">Win ৳</div><div class="win-text-bottom">${amount.toFixed(2)}</div></div><button class="close-btn" onclick="this.closest('.popup-anim').remove()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div></div>`;
+        notifArea.appendChild(popup);
+        setTimeout(() => { if (popup.parentElement) popup.remove(); }, 3000);
+    }
+
+    // Engine loop & crash generation
+    async function determineCrashPoint() {
+        // 1. Check Admin Direct Signal
+        try {
+            if (db) {
+                const s = await db.ref('admin_control/aviator_data/direct_signal').once('value');
+                const v = s.val();
+                if (v && !isNaN(parseFloat(v)) && parseFloat(v) > 1.0) {
+                    await db.ref('admin_control/aviator_data/direct_signal').remove();
+                    return parseFloat(v);
+                }
+                // 2. Check Queue
+                const qSnap = await db.ref('admin_control/aviator_data/signal_queue').once('value');
+                const qVal = qSnap.val();
+                if (qVal && typeof qVal === 'string') {
+                    let queue = qVal.split(',').map(x => x.trim()).filter(Boolean);
+                    if (queue.length > 0) {
+                        let next = parseFloat(queue.shift());
+                        await db.ref('admin_control/aviator_data/signal_queue').set(queue.join(', '));
+                        return next;
+                    }
+                }
+            }
+        } catch (e) {}
+
+        const r = Math.random();
+        if (r < 0.05) return 1.00;
+        let cp = 0.96 / (1 - r);
+        cp = Math.floor(cp * 100) / 100;
+        if (!isFinite(cp) || cp < 1.00) cp = 1.00;
+        if (cp > 40.00) cp = 40.00;
+        return cp;
+    }
+
+    async function beginNextRound() {
+        crashAt = await determineCrashPoint();
+        roundStart = (Date.now() / 1000) + totalLoadingTime;
+        state = 'loading';
+        localLoadingStartMs = Date.now();
+        initialLoadingProgress = 0;
+        generateRoundData();
+    }
+
+    function initHistory() {
+        const hBar = document.getElementById('history-bar');
+        const grid = document.getElementById('history-popup-grid');
+        hBar.innerHTML = ''; grid.innerHTML = '';
+        extendedHistory.slice(0, 10).forEach(v => {
+            let color = v < 2 ? 'color-blue' : (v < 10 ? 'color-purple' : 'color-pink');
+            hBar.innerHTML += `<span class="multiplier ${color}">${v.toFixed(2)}x</span>`;
+            grid.innerHTML += `<div class="history-grid-wrapper"><div class="history-grid-item ${color}">${v.toFixed(2)}x</div></div>`;
+        });
+    }
+
+    function pushHistory(v) {
+        extendedHistory.unshift(v);
+        if (extendedHistory.length > 20) extendedHistory.pop();
+        initHistory();
+    }
+
+    function triggerCrash(v) {
+        loader.style.display = 'none';
+        multTxt.innerText = v.toFixed(2) + 'x';
+        multTxt.style.color = '#e10512';
+        multTxt.style.display = 'block';
+        flewTxt.style.display = 'block';
+
+        if (animEnabled) {
+            plane.style.transition = 'transform 0.65s ease-in, opacity 0.65s ease-in';
+            plane.style.transform = `translate3d(${lastTx + 450}px, ${lastTy - 450}px, 0) rotate(-20deg)`;
+            plane.style.opacity = '0';
+        }
+        multiplierGlow.style.display = 'none';
+        pushHistory(v);
+        resetBets();
+        setTimeout(beginNextRound, 3500);
+    }
+
+    function gameLoop() {
+        let now = Date.now() / 1000;
+        if (state === 'loading' && now >= roundStart) {
+            state = 'flying';
+            frontendStartTime = performance.now();
+            soundPlayed = false;
+            crashSoundPlayed = false;
+        }
+
+        if (animEnabled) ctx.clearRect(0, 0, cw, ch);
+
+        if (state === 'loading') {
+            plane.style.transition = 'none';
+            plane.style.opacity = '0';
+            loader.style.display = 'flex';
+            multTxt.style.display = 'none';
+            flewTxt.style.display = 'none';
+            multiplierGlow.style.display = 'none';
+
+            let elapsed = (Date.now() - localLoadingStartMs) / 1000;
+            let pct = Math.max(0, 100 - (elapsed / totalLoadingTime) * 100);
+            lFill.style.width = pct + '%';
+        } else if (state === 'flying') {
+            loader.style.display = 'none';
+            multTxt.style.display = 'block';
+            flewTxt.style.display = 'none';
+            if (animEnabled) plane.style.opacity = '1';
+
+            let elapsedSec = (performance.now() - frontendStartTime) / 1000;
+            currentVal = Math.pow(1.08, elapsedSec);
+            if (currentVal > 40) currentVal = 40.00;
+
+            multTxt.innerText = currentVal.toFixed(2) + 'x';
+            multTxt.style.color = '#fff';
+
+            if (animEnabled) {
+                multiplierGlow.style.display = 'block';
+                multiplierGlow.style.background = currentVal < 2 ? 'radial-gradient(circle, rgba(52,180,255,0.7) 0%, transparent 70%)' : (currentVal < 10 ? 'radial-gradient(circle, rgba(145,62,248,0.7) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(192,23,178,0.7) 0%, transparent 70%)');
+            }
+
+            checkCashouts();
+
+            if (!soundPlayed && soundEnabled) {
+                soundPlayed = true;
+                startSfx.volume = 0.5; startSfx.currentTime = 0; startSfx.play().catch(()=>{});
+            }
+
+            if (currentVal >= crashAt) {
+                currentVal = crashAt;
+                if (!crashSoundPlayed && soundEnabled) {
+                    crashSoundPlayed = true;
+                    crashSfx.volume = 0.7; crashSfx.currentTime = 0; crashSfx.play().catch(()=>{});
+                }
+                renderFlight(crashAt);
+                triggerCrash(crashAt);
+                state = 'crashed';
+            } else {
+                renderFlight(currentVal);
+            }
+        }
+        requestAnimationFrame(gameLoop);
+    }
+
+    function renderFlight(val) {
+        if (!animEnabled) return;
+        let progress = Math.min(1, (val - 1.00) / 1.30);
+        let maxTx = cw * 0.65;
+        let centerPoint = ch * 0.48;
+        let tx = maxTx * progress;
+        let ty = ch - (ch - centerPoint) * progress;
+
+        ctx.beginPath();
+        ctx.moveTo(0, ch);
+        ctx.quadraticCurveTo(tx * 0.4, ch, tx, ty);
+        ctx.strokeStyle = '#b80000';
+        ctx.lineWidth = 4.0;
+        ctx.stroke();
+        ctx.lineTo(tx, ch);
+        ctx.lineTo(0, ch);
+        ctx.closePath();
+
+        let gradient = ctx.createLinearGradient(0, ty, 0, ch);
+        gradient.addColorStop(0, 'rgba(184, 0, 0, 0.85)');
+        gradient.addColorStop(1, 'rgba(184, 0, 0, 0.05)');
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        lastTx = tx; lastTy = ty;
+        plane.style.transition = 'none';
+        plane.style.transform = `translate3d(${tx}px, ${ty}px, 0) translate(-50%, -100%) rotate(-5deg)`;
+    }
+
+    function resize() {
+        const area = document.querySelector('.game-screen');
+        if (!area) return;
+        cw = area.clientWidth; ch = area.clientHeight;
+        const dpi = window.devicePixelRatio || 1;
+        canvas.style.width = cw + 'px'; canvas.style.height = ch + 'px';
+        canvas.width = cw * dpi; canvas.height = ch * dpi;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpi, dpi);
+    }
+
+    function generateRoundData() {
+        const list = document.getElementById('allBetsList');
+        if (!list) return;
+        let html = '';
+        for (let i = 0; i < 35; i++) {
+            let bet = (Math.random() * 400 + 10).toFixed(2);
+            let mult = (Math.random() * 3 + 1.1).toFixed(2);
+            let win = (bet * mult).toFixed(2);
+            html += `
+                <div class="bet-row won">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <img src="https://i.pravatar.cc/100?img=${i+10}" class="user-icon">
+                        <span style="color:#9ea0a3">u***${i%10}</span>
+                    </div>
+                    <div>${bet}</div>
+                    <div style="text-align:center; color:#34b4ff">${mult}x</div>
+                    <div class="win-amount">${win}</div>
+                </div>`;
+        }
+        list.innerHTML = html;
+        document.getElementById('igc-count').innerText = Math.floor(Math.random() * 250 + 150);
+    }
+
+    function openMenu() { document.getElementById('menuOverlay').style.display = 'block'; }
+    function closeMenu() { document.getElementById('menuOverlay').style.display = 'none'; }
+    function openHistoryPopup() { document.getElementById('historyPopup').style.display = 'flex'; }
+    function closeHistoryPopup() { document.getElementById('historyPopup').style.display = 'none'; }
+    function copyUserID() {
+        navigator.clipboard.writeText(document.getElementById('userIdText').innerText);
+        displayNotice("UID copied to clipboard");
+    }
+    function showTelegramPopup() {
+        window.open('https://t.me/Akram_99360', '_blank');
+    }
+
+    // Tab buttons
+    document.querySelectorAll('#listTabs .list-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('#listTabs .list-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const target = tab.getAttribute('data-target');
+            document.querySelectorAll('.list-tab-content').forEach(c => {
+                c.classList.toggle('active-content', c.id === target);
+            });
+        });
+    });
+
+    window.addEventListener('load', () => {
+        syncUser();
+        resize();
+        initHistory();
+        beginNextRound();
+        requestAnimationFrame(gameLoop);
+
+        setTimeout(() => {
+            document.getElementById('spribe-preloader').style.display = 'none';
+            const realApp = document.getElementById('real-app');
+            realApp.style.visibility = 'visible';
+            realApp.style.opacity = '1';
+            realApp.style.position = 'relative';
+            resize();
+        }, 1800);
+    });
+
+    window.addEventListener('resize', resize);
+    document.body.addEventListener('click', () => {
+        const bgm = document.getElementById('bgm');
+        if (bgm && musicEnabled) { bgm.volume = 0.3; bgm.play().catch(()=>{}); }
+        document.getElementById('audio-trigger').style.display = 'none';
+    }, { once: true });
+    </script>
+  </body>
+</html>

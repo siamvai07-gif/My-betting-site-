@@ -1,0 +1,6 @@
+{
+  "name": "NEXUS WIN - Premium Gaming & Admin Platform",
+  "description": "Cinematic AMOLED gaming and administration platform featuring WinGo, Aviator, Realtime Wallet, Agency Subordinates, and Real-time SaaS Administration powered by Firebase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

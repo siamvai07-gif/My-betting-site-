@@ -1,0 +1,32 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/aviator"
+  to = "/aviator.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/aviator/*"
+  to = "/aviator.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
