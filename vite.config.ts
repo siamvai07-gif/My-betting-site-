@@ -13,8 +13,6 @@ function routeRewritePlugin(): Plugin {
           req.url = '/admin.html';
         } else if (url === '/aviator' || url === '/aviator/') {
           req.url = '/aviator.html';
-        } else if (url === '/user' || url === '/user/') {
-          req.url = '/AVVV.html';
         }
         next();
       });
@@ -36,6 +34,7 @@ export default defineConfig(() => {
           main: path.resolve(__dirname, 'index.html'),
           admin: path.resolve(__dirname, 'admin.html'),
           aviator: path.resolve(__dirname, 'aviator.html'),
+          notfound: path.resolve(__dirname, '404.html'),
         },
       },
     },

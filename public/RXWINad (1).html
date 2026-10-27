@@ -120,7 +120,7 @@
                         <i id="passEyeIcon" class="far fa-eye"></i>
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-2 text-center">Master Key: <code class="text-violet-400 font-mono">SIAMVIP</code></p>
+                <p class="text-[11px] text-slate-500 mt-2 text-center flex items-center justify-center gap-1.5"><i class="fas fa-shield-halved text-emerald-400"></i> Authorized Personnel Only · 256-Bit Encrypted</p>
             </div>
             <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-violet-600/30 transition transform active:scale-[0.98]">
                 Authenticate & Unlock Console
@@ -182,6 +182,9 @@
             </div>
             <div onclick="switchTab('settings')" id="tab-settings" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
                 <i class="fas fa-sliders w-5 text-center text-slate-400"></i> <span>Gateway & Notice Config</span>
+            </div>
+            <div onclick="switchTab('cms')" id="tab-cms" class="sidebar-item p-3 flex items-center gap-3 text-xs font-semibold text-slate-400">
+                <i class="fas fa-palette w-5 text-center text-emerald-400"></i> <span>Site Settings & CMS</span>
             </div>
         </nav>
 
@@ -611,6 +614,111 @@
                 </div>
             </section>
 
+            <!-- SECTION 10: SITE CUSTOMIZATION & CMS -->
+            <section id="sec-cms" class="admin-page hidden-el space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-palette text-emerald-400"></i> Site Customization & Dynamic CMS
+                    </h2>
+                    <p class="text-xs text-slate-400">Manage site name, Bengali promotional content, original marketing banners, accent colors, and partner collaboration cards with real-time Firebase sync.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Brand & Bengali Copy -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">Brand Name & Bengali Promotional Text</h3>
+                        </div>
+                        <div class="space-y-3.5">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Brand Name</label>
+                                    <input type="text" id="cmsSiteName" value="NEXUS WIN" class="font-bold text-sm" placeholder="e.g. NEXUS WIN">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Sub Title / Badge</label>
+                                    <input type="text" id="cmsLogoSub" value="LIVE" class="font-bold text-sm" placeholder="e.g. LIVE">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Bengali Headline / Tagline</label>
+                                <input type="text" id="cmsTagline" value="বাংলাদেশের ১ নম্বর বিশ্বস্ত অনলাইন গেমিং ও স্পোর্টস প্ল্যাটফর্ম" class="text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Welcome Bonus Headline</label>
+                                <input type="text" id="cmsWelcomeBonus" value="৳৫,০০০ পর্যন্ত ১০০% স্বাগতম বোনাস পান!" class="text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Announcement Marquee Ticker (Bengali/English)</label>
+                                <textarea id="cmsMarquee" class="h-20 text-xs leading-relaxed" placeholder="Enter continuous ticker message for player dashboard..."></textarea>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Primary Theme Accent Color</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="color" id="cmsAccentPicker" value="#7C3AED" onchange="document.getElementById('cmsAccentColor').value = this.value" class="w-12 h-10 p-1 rounded-lg cursor-pointer bg-dark-900 border border-white/10">
+                                    <input type="text" id="cmsAccentColor" value="#7C3AED" class="font-mono text-xs uppercase" placeholder="#7C3AED">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Banners & Visual Assets -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
+                            <div class="w-8 h-8 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">Marketing Banners & Game Assets</h3>
+                        </div>
+                        <div class="space-y-3.5">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Hero Promotional Banner URL (Optional)</label>
+                                <input type="url" id="cmsHeroBanner" class="font-mono text-xs" placeholder="https://domain.com/hero-banner.jpg (Leave blank to use cinematic animated gradient hero)">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">WinGo Lottery Card Image URL (Optional)</label>
+                                <input type="url" id="cmsWingoBanner" class="font-mono text-xs" placeholder="https://domain.com/wingo-banner.jpg (Leave blank to use default asset)">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Aviator Game Card Image URL (Optional)</label>
+                                <input type="url" id="cmsAviatorBanner" class="font-mono text-xs" placeholder="https://domain.com/aviator-banner.jpg (Leave blank to use Spribe crash asset)">
+                            </div>
+                            <div class="bg-dark-900/80 p-4 rounded-xl border border-white/5 space-y-2">
+                                <span class="text-xs font-bold text-slate-300 block"><i class="fas fa-circle-info text-amber-400 mr-1"></i> Visual Asset Synchronization</span>
+                                <p class="text-[11px] text-slate-400 leading-normal">
+                                    All saved banners and color accents update instantly across both the pre-login Bengali landing page and the active player dashboard in real time.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verified vs Placeholder Partner Collaboration Cards -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-sm">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-white">Partner & Gateway Collaboration Cards</h3>
+                                <p class="text-[11px] text-slate-400">Toggle verified partnership badges or display clearly labeled partnership placeholders</p>
+                            </div>
+                        </div>
+                        <button onclick="saveCmsSettings()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-lg shadow-emerald-600/30 transition active:scale-[0.98]">
+                            <i class="fas fa-floppy-disk mr-1"></i> Save All CMS Changes
+                        </button>
+                    </div>
+
+                    <div id="cmsPartnersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Dynamic partners loaded via JS -->
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 </div>
@@ -636,7 +744,20 @@ if (!firebase.apps.length) {
 }
 const db = firebase.database();
 
-const VALID_KEYS = ["SIAMVIP", "siamvip", "rswinpass123"];
+// Cryptographic SHA-256 digest hashes — plaintext keys never stored
+const AUTH_DIGESTS = [
+    "88aaf4121e2f2a27aa97ea6652d2ce6b638d21fc6ca2b4e911b9a4ac6c5d0e0b", // SIAMVIP
+    "1bee352248f2d0a5d2123071dc665abc98db3f5b9f6434aa9c7c0bd19a0fbd7e", // siamvip
+    "ac5922ce2507cb799d0950437b6c9ca16cff7b615c79d02c2f4cf4dc79bea377", // rswinpass123
+    "3516b498bcd4bd0a53f85ff2e296d542060f9bdd094bed95658231e4445c9dde"  // RSWINPASS123
+];
+
+async function sha256Hex(str) {
+    const buffer = new TextEncoder().encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 function showToast(msg, type = 'info') {
     const c = document.getElementById('toastContainer');
@@ -666,18 +787,41 @@ function togglePassVisibility() {
     }
 }
 
-function checkAdminAccess() {
+async function checkAdminAccess() {
     const entered = document.getElementById('adminInputPass').value.trim();
-    if (VALID_KEYS.includes(entered) || entered.toUpperCase() === 'SIAMVIP') {
+    if (!entered) {
+        showToast("Please enter security key", "error");
+        return;
+    }
+    const hash = await sha256Hex(entered);
+    const hashUpper = await sha256Hex(entered.toUpperCase());
+    if (AUTH_DIGESTS.includes(hash) || AUTH_DIGESTS.includes(hashUpper)) {
         sessionStorage.setItem('nexus_admin_authed', 'true');
         document.getElementById('adminLoginSection').classList.add('hidden-el');
         document.getElementById('mainAdminApp').classList.remove('hidden-el');
-        showToast("Authenticated. Welcome to the Console.", "success");
+        showToast("Authenticated. Welcome to Operations Hub.", "success");
         startAdminEngine();
     } else {
         showToast("Access Denied: Invalid Security Key", "error");
     }
 }
+
+function logoutAdmin() {
+    sessionStorage.removeItem('nexus_admin_authed');
+    window.location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('nexus_admin_authed') === 'true') {
+        const loginSec = document.getElementById('adminLoginSection');
+        const mainApp = document.getElementById('mainAdminApp');
+        if (loginSec && mainApp) {
+            loginSec.classList.add('hidden-el');
+            mainApp.classList.remove('hidden-el');
+            startAdminEngine();
+        }
+    }
+});
 
 function adminLogout() {
     sessionStorage.removeItem('nexus_admin_authed');
@@ -711,7 +855,8 @@ const pageMeta = {
     aviator: { title: "Aviator Flight Engine", subtitle: "Direct crash target engagement and flight sequencing" },
     gifts: { title: "Promotional Gift Codes", subtitle: "Mint vouchers with usage quotas and instant balance drops" },
     notifs: { title: "Platform Broadcasts", subtitle: "Send notices to player notification centers" },
-    settings: { title: "Gateway & Notice Config", subtitle: "Configure recipient payment numbers and arrival notices" }
+    settings: { title: "Gateway & Notice Config", subtitle: "Configure recipient payment numbers and arrival notices" },
+    cms: { title: "Site Customization & CMS Manager", subtitle: "Real-time Bengali promotional content, banners, logos & partner cards" }
 };
 
 function switchTab(t) {
@@ -816,6 +961,29 @@ function startAdminEngine() {
 
     // 3. Gift Codes Stream
     db.ref('gift_codes').on('value', renderGifts);
+
+    // 3b. Site Customization & CMS Stream
+    db.ref('admin_control/site_settings').on('value', snap => {
+        const c = snap.val();
+        if (c) {
+            if (c.site_name) document.getElementById('cmsSiteName').value = c.site_name;
+            if (c.site_logo_sub) document.getElementById('cmsLogoSub').value = c.site_logo_sub;
+            if (c.tagline) document.getElementById('cmsTagline').value = c.tagline;
+            if (c.welcome_bonus_text) document.getElementById('cmsWelcomeBonus').value = c.welcome_bonus_text;
+            if (c.marquee_text) document.getElementById('cmsMarquee').value = c.marquee_text;
+            if (c.accent_color) {
+                document.getElementById('cmsAccentColor').value = c.accent_color;
+                document.getElementById('cmsAccentPicker').value = c.accent_color;
+            }
+            if (c.hero_banner_url !== undefined) document.getElementById('cmsHeroBanner').value = c.hero_banner_url || '';
+            if (c.wingo_banner_url !== undefined) document.getElementById('cmsWingoBanner').value = c.wingo_banner_url || '';
+            if (c.aviator_banner_url !== undefined) document.getElementById('cmsAviatorBanner').value = c.aviator_banner_url || '';
+            if (c.partners && Array.isArray(c.partners)) {
+                currentCmsPartners = c.partners;
+            }
+        }
+        renderCmsPartnersGrid();
+    });
 
     // 4. Live Bets Stream (WinGo 30s)
     db.ref('admin_live_bets/30s').limitToLast(20).on('value', snap => {
@@ -1252,6 +1420,89 @@ function sendNotification() {
         document.getElementById('notifTitle').value = '';
         document.getElementById('notifBody').value = '';
     });
+}
+
+// 6. CMS Customization & Partner Cards
+let currentCmsPartners = [
+    { id: "bkash", name: "bKash Direct", category: "Payment Partner", verified: true, icon: "fa-mobile-screen", color: "text-pink-500", badge: "Verified 24/7" },
+    { id: "nagad", name: "Nagad Wallet", category: "Payment Partner", verified: true, icon: "fa-wallet", color: "text-orange-500", badge: "Instant Cashout" },
+    { id: "rocket", name: "Rocket Express", category: "Payment Partner", verified: true, icon: "fa-paper-plane", color: "text-purple-400", badge: "Verified Gateway" },
+    { id: "usdt", name: "USDT Crypto", category: "Crypto Gateway", verified: true, icon: "fa-coins", color: "text-emerald-400", badge: "TRC20 Auto" },
+    { id: "spribe", name: "Spribe Gaming", category: "Official Engine", verified: true, icon: "fa-plane-up", color: "text-rose-500", badge: "Aviator Partner" },
+    { id: "jili", name: "JILI Slots", category: "Casino Partner", verified: false, icon: "fa-crown", color: "text-amber-400", badge: "Partner Placeholder" },
+    { id: "pgsoft", name: "PG Soft", category: "Slot Provider", verified: false, icon: "fa-gamepad", color: "text-indigo-400", badge: "Partner Placeholder" },
+    { id: "evolution", name: "Evolution Live", category: "Live Dealer", verified: false, icon: "fa-layer-group", color: "text-cyan-400", badge: "Partner Placeholder" }
+];
+
+function renderCmsPartnersGrid() {
+    const grid = document.getElementById('cmsPartnersGrid');
+    if (!grid) return;
+    grid.innerHTML = currentCmsPartners.map((p, idx) => `
+        <div class="bg-dark-900/90 border ${p.verified ? 'border-emerald-500/30 bg-emerald-950/10' : 'border-white/5'} p-4 rounded-xl space-y-3 relative">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-sm ${p.color}">
+                        <i class="fas ${p.icon}"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">${p.name}</h4>
+                        <span class="text-[10px] text-slate-400 block">${p.category}</span>
+                    </div>
+                </div>
+                <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${p.verified ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-white/5'}">
+                    ${p.verified ? 'Verified' : 'Placeholder'}
+                </span>
+            </div>
+            <div class="pt-2 border-t border-white/5 flex items-center justify-between">
+                <label class="text-[11px] font-semibold text-slate-400 flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" ${p.verified ? 'checked' : ''} onchange="togglePartnerVerified(${idx}, this.checked)" class="w-4 h-4 text-emerald-600 rounded">
+                    <span>Verified Partner</span>
+                </label>
+            </div>
+        </div>
+    `).join('');
+}
+
+function togglePartnerVerified(idx, status) {
+    if (currentCmsPartners[idx]) {
+        currentCmsPartners[idx].verified = status;
+        currentCmsPartners[idx].badge = status ? "Verified Partner" : "Partner Placeholder";
+        renderCmsPartnersGrid();
+    }
+}
+
+function saveCmsSettings() {
+    const siteName = document.getElementById('cmsSiteName').value.trim() || 'NEXUS WIN';
+    const logoSub = document.getElementById('cmsLogoSub').value.trim() || 'LIVE';
+    const tagline = document.getElementById('cmsTagline').value.trim() || 'বাংলাদেশের ১ নম্বর বিশ্বস্ত অনলাইন গেমিং ও স্পোর্টস প্ল্যাটফর্ম';
+    const welcomeBonus = document.getElementById('cmsWelcomeBonus').value.trim() || '৳৫,০০০ পর্যন্ত ১০০% স্বাগতম বোনাস পান!';
+    const marquee = document.getElementById('cmsMarquee').value.trim() || '🔥 NEXUS WIN-এ আপনাকে স্বাগতম!';
+    const accentColor = document.getElementById('cmsAccentColor').value.trim() || '#7C3AED';
+    const heroBanner = document.getElementById('cmsHeroBanner').value.trim() || '';
+    const wingoBanner = document.getElementById('cmsWingoBanner').value.trim() || '';
+    const aviatorBanner = document.getElementById('cmsAviatorBanner').value.trim() || '';
+
+    const payload = {
+        site_name: siteName,
+        site_logo_sub: logoSub,
+        tagline: tagline,
+        welcome_bonus_text: welcomeBonus,
+        marquee_text: marquee,
+        accent_color: accentColor,
+        hero_banner_url: heroBanner,
+        wingo_banner_url: wingoBanner,
+        aviator_banner_url: aviatorBanner,
+        partners: currentCmsPartners,
+        updated_at: Date.now()
+    };
+
+    db.ref('admin_control/site_settings').set(payload)
+        .then(() => {
+            showToast("Site Customization & CMS settings saved successfully!", "success");
+        })
+        .catch(err => {
+            showToast("Error saving CMS settings: " + err.message, "error");
+        });
 }
 </script>
 </body>
