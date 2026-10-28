@@ -1358,7 +1358,10 @@ function deleteUser(phone) {
 
 function actionTx(phone, txKey, status, type, amount) {
     const u = usersCache[phone];
-    if (!u) return;
+    if (!u) {
+        showToast("Error: User record not found in cache", "error");
+        return;
+    }
     const isApprove = status === 'complete';
 
     openActionModal({
@@ -1366,22 +1369,39 @@ function actionTx(phone, txKey, status, type, amount) {
         subtitle: `${phone} · ৳${parseFloat(amount).toFixed(2)}`,
         content: `Are you sure you want to mark this transaction as <strong class="${isApprove ? 'text-emerald-400' : 'text-rose-400'}">${status.toUpperCase()}</strong>?`,
         onConfirm: () => {
-            let updates = {};
-            updates[`users/${phone}/transactions/${txKey}/status`] = status;
+            // Verify current transaction status in DB to prevent duplicate processing
+            db.ref(`users/${phone}/transactions/${txKey}`).once('value', snap => {
+                const txData = snap.val();
+                if (!txData) {
+                    showToast("Transaction not found in database", "error");
+                    return;
+                }
+                const currentStatus = String(txData.status || '').toLowerCase();
+                if (currentStatus === 'complete' || currentStatus === 'accepted' || currentStatus === 'success' || currentStatus === 'rejected') {
+                    showToast(`Transaction is already marked as ${currentStatus}`, "error");
+                    return;
+                }
 
-            // Balance adjustment rules
-            if (type === 'Deposit' && status === 'complete') {
-                updates[`users/${phone}/balance`] = (parseFloat(u.balance) || 0) + parseFloat(amount);
-            }
-            if (type === 'Withdraw' && status === 'rejected') {
-                // Refund back to user
-                updates[`users/${phone}/balance`] = (parseFloat(u.balance) || 0) + parseFloat(amount);
-            }
+                let updates = {};
+                updates[`users/${phone}/transactions/${txKey}/status`] = status;
+                updates[`users/${phone}/transactions/${txKey}/processedAt`] = Date.now();
 
-            db.ref().update(updates).then(() => {
-                showToast(`${type} marked as ${status}`, "success");
-            }).catch(err => {
-                showToast(err.message, "error");
+                let currentBal = parseFloat(u.balance) || 0;
+                let amtNum = parseFloat(amount) || 0;
+
+                // Balance adjustment rules
+                if (type === 'Deposit' && isApprove) {
+                    updates[`users/${phone}/balance`] = currentBal + amtNum;
+                } else if (type === 'Withdraw' && status === 'rejected') {
+                    // Refund back to user
+                    updates[`users/${phone}/balance`] = currentBal + amtNum;
+                }
+
+                db.ref().update(updates).then(() => {
+                    showToast(`${type} marked as ${status} and balance updated successfully`, "success");
+                }).catch(err => {
+                    showToast("Failed to update Firebase: " + err.message, "error");
+                });
             });
         }
     });
