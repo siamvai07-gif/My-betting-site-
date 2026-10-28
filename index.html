@@ -2226,14 +2226,18 @@ let isSoundMuted = localStorage.getItem('bd99_sound_muted') === 'true';
 // Web Audio API Synthesizer Engine
 let audioCtx = null;
 function getAudioContext() {
-    if (!audioCtx) {
-        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtxClass) {
-            audioCtx = new AudioCtxClass();
+    try {
+        if (!audioCtx) {
+            const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtxClass) {
+                audioCtx = new AudioCtxClass();
+            }
         }
-    }
-    if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    } catch (e) {
+        console.warn("AudioContext blocked or unavailable:", e);
     }
     return audioCtx;
 }
