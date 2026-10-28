@@ -411,6 +411,7 @@
                                 <select id="wingoTargetMarket">
                                     <option value="30s">WinGo 30 Seconds</option>
                                     <option value="1m">WinGo 1 Minute</option>
+                                    <option value="2m">WinGo 2 Minutes</option>
                                     <option value="3m">WinGo 3 Minutes</option>
                                     <option value="5m">WinGo 5 Minutes</option>
                                 </select>
@@ -566,27 +567,96 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Deposit Numbers -->
-                    <div class="glass-panel p-6 rounded-2xl space-y-4">
-                        <div class="flex items-center gap-2.5 pb-3 border-b border-white/5">
-                            <div class="w-8 h-8 rounded-xl bg-violet-600/10 text-violet-400 flex items-center justify-center text-sm">
-                                <i class="fas fa-wallet"></i>
+                    <!-- Deposit Gateways Configuration -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-5 col-span-1 md:col-span-2">
+                        <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm text-white">Deposit Gateways & Dynamic Number Rotation</h3>
+                                    <p class="text-[11px] text-slate-400">Manage separate Send Money & Cash Out numbers and rotation rules for bKash and Nagad</p>
+                                </div>
                             </div>
-                            <h3 class="font-bold text-sm text-white">Deposit Gateway Receiving Numbers</h3>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs font-semibold text-slate-400">Allocation Strategy:</label>
+                                <select id="setGwRotationRule" class="text-xs font-bold py-1.5 px-3 rounded-lg bg-dark-900 border border-white/10 text-white outline-none">
+                                    <option value="sequential">Sequential Rotation (Round Robin)</option>
+                                    <option value="random">Random Selection</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="space-y-3.5">
-                            <div>
-                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">bKash Personal / Agent Number</label>
-                                <input type="text" id="setBkashNum" placeholder="017xxxxxxxx" class="font-mono text-sm">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- bKash Manager -->
+                            <div class="bg-dark-950/60 p-4 rounded-xl border border-pink-500/20 space-y-4">
+                                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                                    <span class="font-black text-sm text-[#E2136E] flex items-center gap-2">
+                                        <span class="w-5 h-5 rounded bg-[#E2136E] text-white flex items-center justify-center text-[10px]">bK</span>
+                                        bKash Payment Gateway
+                                    </span>
+                                </div>
+
+                                <!-- bKash Send Money -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs font-bold text-slate-300 flex items-center gap-2">
+                                            <input type="checkbox" id="bkSmEnabled" checked class="w-4 h-4 text-pink-600 rounded">
+                                            <span>Send Money Option</span>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="bkSmNumbers" placeholder="e.g. 01854529933, 01711223344 (comma separated)" class="font-mono text-xs">
+                                </div>
+
+                                <!-- bKash Cash Out -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs font-bold text-slate-300 flex items-center gap-2">
+                                            <input type="checkbox" id="bkCoEnabled" checked class="w-4 h-4 text-pink-600 rounded">
+                                            <span>Cash Out Option (Agent Numbers)</span>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="bkCoNumbers" placeholder="e.g. 01854529933, 01988776655 (comma separated)" class="font-mono text-xs">
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Nagad Personal / Agent Number</label>
-                                <input type="text" id="setNagadNum" placeholder="018xxxxxxxx" class="font-mono text-sm">
+
+                            <!-- Nagad Manager -->
+                            <div class="bg-dark-950/60 p-4 rounded-xl border border-rose-500/20 space-y-4">
+                                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                                    <span class="font-black text-sm text-[#ED1C24] flex items-center gap-2">
+                                        <span class="w-5 h-5 rounded bg-[#ED1C24] text-white flex items-center justify-center text-[10px]">NG</span>
+                                        Nagad Payment Gateway
+                                    </span>
+                                </div>
+
+                                <!-- Nagad Send Money -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs font-bold text-slate-300 flex items-center gap-2">
+                                            <input type="checkbox" id="ngSmEnabled" checked class="w-4 h-4 text-rose-600 rounded">
+                                            <span>Send Money Option</span>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="ngSmNumbers" placeholder="e.g. 01833527821, 01655443322 (comma separated)" class="font-mono text-xs">
+                                </div>
+
+                                <!-- Nagad Cash Out -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs font-bold text-slate-300 flex items-center gap-2">
+                                            <input type="checkbox" id="ngCoEnabled" checked class="w-4 h-4 text-rose-600 rounded">
+                                            <span>Cash Out Option (Agent Numbers)</span>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="ngCoNumbers" placeholder="e.g. 01833527821, 01899887766 (comma separated)" class="font-mono text-xs">
+                                </div>
                             </div>
-                            <button onclick="saveAdminNumbers()" class="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-3 rounded-xl shadow-md transition active:scale-[0.98]">
-                                Update Payment Gateways
-                            </button>
                         </div>
+
+                        <button onclick="saveAdminGatewaySettings()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition active:scale-[0.98]">
+                            Save Gateway Configurations & Sync Real-Time
+                        </button>
                     </div>
 
                     <!-- Modal Announcement -->
@@ -948,15 +1018,53 @@ function startAdminEngine() {
     // 2. Settings Stream
     db.ref('admin_settings').on('value', snap => {
         const s = snap.val() || {};
-        const bkashEl = document.getElementById('setBkashNum');
-        const nagadEl = document.getElementById('setNagadNum');
         const msgEl = document.getElementById('setPopupMsg');
         const activeEl = document.getElementById('setPopupActive');
         
-        if (bkashEl) bkashEl.value = (s.deposit_numbers && (s.deposit_numbers.Bkash || s.deposit_numbers.bkash)) || "";
-        if (nagadEl) nagadEl.value = (s.deposit_numbers && (s.deposit_numbers.Nagad || s.deposit_numbers.nagad)) || "";
         if (msgEl) msgEl.value = s.popup_message || "";
         if (activeEl) activeEl.checked = s.popup_active || false;
+    });
+
+    // 2b. Stream Deposit Gateways Config
+    db.ref('admin_settings/deposit_gateways').on('value', snap => {
+        const g = snap.val() || {};
+        
+        // bKash
+        const bkData = g.Bkash || {};
+        const bkSmInp = document.getElementById('bkSmNumbers');
+        const bkCoInp = document.getElementById('bkCoNumbers');
+        if (bkSmInp) {
+            let nums = bkData.send_money && bkData.send_money.numbers ? bkData.send_money.numbers : ["01854529933"];
+            if (typeof nums === 'string') nums = [nums];
+            bkSmInp.value = nums.join(', ');
+            document.getElementById('bkSmEnabled').checked = bkData.send_money ? bkData.send_money.enabled !== false : true;
+        }
+        if (bkCoInp) {
+            let nums = bkData.cash_out && bkData.cash_out.numbers ? bkData.cash_out.numbers : ["01854529933"];
+            if (typeof nums === 'string') nums = [nums];
+            bkCoInp.value = nums.join(', ');
+            document.getElementById('bkCoEnabled').checked = bkData.cash_out ? bkData.cash_out.enabled !== false : true;
+        }
+
+        // Nagad
+        const ngData = g.Nagad || {};
+        const ngSmInp = document.getElementById('ngSmNumbers');
+        const ngCoInp = document.getElementById('ngCoNumbers');
+        if (ngSmInp) {
+            let nums = ngData.send_money && ngData.send_money.numbers ? ngData.send_money.numbers : ["01833527821"];
+            if (typeof nums === 'string') nums = [nums];
+            ngSmInp.value = nums.join(', ');
+            document.getElementById('ngSmEnabled').checked = ngData.send_money ? ngData.send_money.enabled !== false : true;
+        }
+        if (ngCoInp) {
+            let nums = ngData.cash_out && ngData.cash_out.numbers ? ngData.cash_out.numbers : ["01833527821"];
+            if (typeof nums === 'string') nums = [nums];
+            ngCoInp.value = nums.join(', ');
+            document.getElementById('ngCoEnabled').checked = ngData.cash_out ? ngData.cash_out.enabled !== false : true;
+        }
+
+        const rotSel = document.getElementById('setGwRotationRule');
+        if (rotSel) rotSel.value = g.rotationRule || 'sequential';
     });
 
     // 3. Gift Codes Stream
@@ -986,23 +1094,39 @@ function startAdminEngine() {
     });
 
     // 4. Live Bets Stream (WinGo 30s)
-    db.ref('admin_live_bets/30s').limitToLast(20).on('value', snap => {
+    db.ref('admin_live_bets/30s').limitToLast(10).on('value', snap => {
         const panel = document.getElementById('liveBetsPanel');
-        const bets = snap.val();
-        if (!bets) {
-            panel.innerHTML = '<p class="text-slate-500 italic text-xs text-center py-8">No active wagers placed yet.</p>';
+        const periodsData = snap.val();
+        if (!periodsData) {
+            panel.innerHTML = '<p class="text-slate-500 italic text-xs text-center py-8">Monitoring real-time round wagers...</p>';
             return;
         }
+        let allBets = [];
+        Object.entries(periodsData).forEach(([periodId, betsObj]) => {
+            if (betsObj && typeof betsObj === 'object') {
+                Object.values(betsObj).forEach(b => {
+                    if (b && typeof b === 'object') {
+                        allBets.push({ ...b, periodId });
+                    }
+                });
+            }
+        });
+        allBets.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        if (allBets.length === 0) {
+            panel.innerHTML = '<p class="text-slate-500 italic text-xs text-center py-8">Monitoring real-time round wagers...</p>';
+            return;
+        }
+
         let html = '';
-        const list = Object.values(bets).reverse();
-        list.forEach(b => {
+        allBets.slice(0, 15).forEach(b => {
             const timeStr = b.timestamp ? new Date(b.timestamp).toLocaleTimeString([], { hour12: false }) : '';
             html += `
                 <div class="flex items-center justify-between text-xs bg-dark-900 border border-white/5 p-2.5 rounded-xl hover:border-violet-500/20 transition">
                     <div class="flex items-center gap-2.5">
-                        <span class="w-6 h-6 rounded-lg bg-violet-600/20 text-violet-400 flex items-center justify-center text-[10px] font-mono font-bold">${(b.selection || '').charAt(0)}</span>
+                        <span class="w-6 h-6 rounded-lg bg-violet-600/20 text-violet-400 flex items-center justify-center text-[10px] font-mono font-bold">${String(b.selection || '0').charAt(0)}</span>
                         <div>
-                            <p class="font-bold text-white">${b.name || b.phone || 'Player'} <span class="text-slate-500 font-mono text-[10px]">(${b.uid || '---'})</span></p>
+                            <p class="font-bold text-white">${b.name || b.phone || 'Player'} <span class="text-slate-500 font-mono text-[10px]">(${b.periodId || '---'})</span></p>
                             <span class="text-[10px] text-slate-500">${timeStr}</span>
                         </div>
                     </div>
@@ -1376,17 +1500,70 @@ function deleteGiftCode(code) {
     });
 }
 
-// 4. Site Settings
-function saveAdminNumbers() {
-    const bk = document.getElementById('setBkashNum').value.trim();
-    const ng = document.getElementById('setNagadNum').value.trim();
+// 4. Site & Gateway Settings
+function saveAdminGatewaySettings() {
+    const parseNums = (str) => (str || '').split(',').map(s => s.trim()).filter(s => s !== '');
+    
+    const bkSmArr = parseNums(document.getElementById('bkSmNumbers').value);
+    const bkCoArr = parseNums(document.getElementById('bkCoNumbers').value);
+    const ngSmArr = parseNums(document.getElementById('ngSmNumbers').value);
+    const ngCoArr = parseNums(document.getElementById('ngCoNumbers').value);
 
-    db.ref('admin_settings/deposit_numbers').update({
-        Bkash: bk,
-        Nagad: ng
-    }).then(() => {
-        showToast("Gateway receiving numbers updated", "success");
+    const rotationRule = document.getElementById('setGwRotationRule').value;
+
+    const gatewayPayload = {
+        Bkash: {
+            send_money: {
+                enabled: document.getElementById('bkSmEnabled').checked,
+                numbers: bkSmArr.length > 0 ? bkSmArr : ["01854529933"],
+                instruction: "এই BKASH নাম্বারে টাকা পাঠাতে সেন্ড মানি ব্যবহার করুন"
+            },
+            cash_out: {
+                enabled: document.getElementById('bkCoEnabled').checked,
+                numbers: bkCoArr.length > 0 ? bkCoArr : ["01854529933"],
+                instruction: "এই BKASH এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে ক্যাশ আউট ব্যবহার করুন"
+            },
+            rotationRule: rotationRule
+        },
+        Nagad: {
+            send_money: {
+                enabled: document.getElementById('ngSmEnabled').checked,
+                numbers: ngSmArr.length > 0 ? ngSmArr : ["01833527821"],
+                instruction: "এই নগদ অ্যাকাউন্টে টাকা পাঠাতে সেন্ড মানি ব্যবহার করুন"
+            },
+            cash_out: {
+                enabled: document.getElementById('ngCoEnabled').checked,
+                numbers: ngCoArr.length > 0 ? ngCoArr : ["01833527821"],
+                instruction: "এই নগদ এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে ক্যাশ আউট ব্যবহার করুন"
+            },
+            rotationRule: rotationRule
+        },
+        rotationRule: rotationRule
+    };
+
+    let primaryBkash = bkSmArr[0] || bkCoArr[0] || "01854529933";
+    let primaryNagad = ngSmArr[0] || ngCoArr[0] || "01833527821";
+
+    db.ref('admin_settings/deposit_gateways').update(gatewayPayload);
+    db.ref('admin_settings/deposit_numbers').update({ Bkash: primaryBkash, Nagad: primaryNagad });
+
+    // Sync settings/bkash & settings/nagad
+    db.ref('settings/bkash').update({
+        walletNumber: primaryBkash,
+        methodTitle: "BKASH Deposit",
+        instruction: "এই BKASH নাম্বারে টাকা পাঠাতে সেন্ড মানি ব্যবহার করুন"
     });
+    db.ref('settings/nagad').update({
+        walletNumber: primaryNagad,
+        methodTitle: "NAGAD Deposit",
+        instruction: "এই নগদ এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে ক্যাশ আউট ব্যবহার করুন"
+    });
+
+    showToast("Gateway configurations & payment numbers updated real-time", "success");
+}
+
+function saveAdminNumbers() {
+    saveAdminGatewaySettings();
 }
 
 function savePopupSettings() {

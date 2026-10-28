@@ -374,6 +374,9 @@
 
             <!-- Action Buttons -->
             <div class="flex items-center gap-2.5">
+                <button onclick="toggleGlobalSound()" class="sound-toggle-btn flex items-center justify-center w-8.5 h-8.5 rounded-lg bg-[#121624] border border-white/10 hover:border-white/20 text-xs font-bold text-slate-300 transition active:scale-95" title="Toggle Sound Effects">
+                    <i class="fas fa-volume-high text-violet-400 sound-toggle-icon"></i>
+                </button>
                 <button onclick="openLanguageModal()" class="flex items-center gap-1 bg-[#121624] border border-white/10 hover:border-white/20 px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-300 transition">
                     <i class="fas fa-globe text-violet-400"></i>
                     <span id="landingLangText">EN</span>
@@ -748,7 +751,10 @@
                 <span class="w-7 h-7 rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-500 flex items-center justify-center font-black text-xs text-white shadow-md shadow-violet-500/20">NW</span>
                 <h1 class="text-lg font-black italic tracking-tight text-white">NEXUS<span class="text-violet-400">WIN</span></h1>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2.5">
+                <button onclick="toggleGlobalSound()" class="sound-toggle-btn w-9 h-9 rounded-xl bg-amoled-surface border border-amoled-border flex items-center justify-center text-xs text-slate-300 hover:text-white transition active:scale-95" title="Toggle Sound Effects">
+                    <i class="fas fa-volume-high text-violet-400 sound-toggle-icon"></i>
+                </button>
                 <button onclick="openLanguageModal()" class="w-9 h-9 rounded-xl bg-amoled-surface border border-amoled-border flex items-center justify-center text-xs text-slate-300 hover:text-white transition" title="Language">
                     <i class="fas fa-globe text-violet-400"></i>
                 </button>
@@ -1122,9 +1128,22 @@
                     </div>
                 </div>
 
+                <!-- Transfer Type Selector (Send Money / Cash Out) -->
+                <div class="space-y-2">
+                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block pl-1">Transfer Action</label>
+                    <div class="grid grid-cols-2 gap-2" id="transferTypeGrid">
+                        <button type="button" onclick="selectTransferType('send_money')" id="tt-btn-send_money" class="p-3 rounded-xl border border-violet-500 text-xs font-bold bg-violet-600/20 text-violet-300 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-paper-plane"></i> Send Money
+                        </button>
+                        <button type="button" onclick="selectTransferType('cash_out')" id="tt-btn-cash_out" class="p-3 rounded-xl border border-white/5 text-xs font-bold bg-dark-900 text-slate-400 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-hand-holding-dollar"></i> Cash Out
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Channel Selector -->
                 <div class="space-y-2">
-                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block pl-1">Transfer Gateway Route</label>
+                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block pl-1">Gateway Route</label>
                     <div class="grid grid-cols-2 gap-2" id="channelGrid"></div>
                 </div>
 
@@ -1347,8 +1366,8 @@
                 <button onclick="closeGame()" class="text-slate-400 hover:text-white p-1 text-base"><i class="fas fa-chevron-left"></i></button>
                 <h2 class="font-black italic text-lg text-white">WinGo <span class="text-violet-400 text-sm">Arena</span></h2>
             </div>
-            <div class="flex items-center gap-4 text-slate-300">
-                <button onclick="toggleSound()" id="soundToggleBtn" class="text-slate-400 hover:text-white text-base"><i class="fas fa-volume-high"></i></button>
+            <div class="flex items-center gap-3 text-slate-300">
+                <button onclick="toggleGlobalSound()" class="sound-toggle-btn text-slate-400 hover:text-white text-base" title="Toggle Sound Effects"><i class="fas fa-volume-high sound-toggle-icon text-violet-400"></i></button>
                 <button onclick="openCsChat()" class="text-slate-400 hover:text-white text-base"><i class="fas fa-headset"></i></button>
             </div>
         </header>
@@ -1365,11 +1384,12 @@
             </div>
 
             <!-- Market Selector -->
-            <div class="grid grid-cols-4 gap-1.5 p-1 bg-amoled-surface rounded-xl border border-amoled-border text-center">
-                <button onclick="switchMarket('30s')" id="market-btn-30s" class="market-btn market-btn-active py-2 rounded-lg text-xs font-bold text-white bg-violet-600">30s</button>
-                <button onclick="switchMarket('1m')" id="market-btn-1m" class="market-btn py-2 rounded-lg text-xs font-bold text-slate-400">1 Min</button>
-                <button onclick="switchMarket('3m')" id="market-btn-3m" class="market-btn py-2 rounded-lg text-xs font-bold text-slate-400">3 Min</button>
-                <button onclick="switchMarket('5m')" id="market-btn-5m" class="market-btn py-2 rounded-lg text-xs font-bold text-slate-400">5 Min</button>
+            <div class="grid grid-cols-5 gap-1 p-1 bg-amoled-surface rounded-xl border border-amoled-border text-center">
+                <button onclick="switchMarket('30s')" id="market-btn-30s" class="market-btn market-btn-active py-2 rounded-lg text-xs font-bold text-white bg-violet-600 shadow-md">30s</button>
+                <button onclick="switchMarket('1m')" id="market-btn-1m" class="market-btn py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white">1 Min</button>
+                <button onclick="switchMarket('2m')" id="market-btn-2m" class="market-btn py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white">2 Min</button>
+                <button onclick="switchMarket('3m')" id="market-btn-3m" class="market-btn py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white">3 Min</button>
+                <button onclick="switchMarket('5m')" id="market-btn-5m" class="market-btn py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white">5 Min</button>
             </div>
 
             <!-- Round Timer Block -->
@@ -1500,8 +1520,13 @@
                 <button onclick="closeAviator()" class="text-crimson-500 hover:text-white p-1 text-base"><i class="fas fa-chevron-left"></i></button>
                 <span class="text-xl font-black italic tracking-tight text-crimson-500">Aviator</span>
             </div>
-            <div class="bg-black/60 border border-white/10 px-3.5 py-1.5 rounded-full font-mono-num font-bold text-xs text-white">
-                ৳ <span class="userBalance text-emerald-400">0.00</span>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleGlobalSound()" class="sound-toggle-btn w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-xs text-slate-300 hover:text-white transition active:scale-95" title="Toggle Sound Effects">
+                    <i class="fas fa-volume-high text-violet-400 sound-toggle-icon"></i>
+                </button>
+                <div class="bg-black/60 border border-white/10 px-3.5 py-1.5 rounded-full font-mono-num font-bold text-xs text-white">
+                    ৳ <span class="userBalance text-emerald-400">0.00</span>
+                </div>
             </div>
         </header>
 
@@ -1633,93 +1658,156 @@
     <!-- ========================================================================= -->
 
     <!-- BET CONFIRMATION DIALOG -->
-    <div id="betConfirmModal" class="hidden-el fixed inset-0 z-[1000] bg-black/80 backdrop-blur-sm flex items-end">
-        <div class="bg-amoled-card w-full rounded-t-3xl p-6 border-t border-violet-500/30 space-y-5 animate-[slideUpFade_0.25s_ease-out]">
-            <div class="text-center">
-                <span id="betMarketNameDisplay" class="text-[10px] font-bold uppercase tracking-widest text-violet-400">WinGo 30s</span>
-                <h3 id="selectedType" class="text-3xl font-black text-white uppercase mt-0.5">Green</h3>
-            </div>
-            <div class="bg-dark-950 p-4 rounded-xl flex justify-between items-center border border-white/5">
-                <span class="text-xs text-slate-400">Current Balance:</span>
-                <span class="font-mono-num font-bold text-white text-base">৳<span class="userBalance">0.00</span></span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span class="text-xs text-slate-300 font-bold">Wager Amount</span>
-                <div class="flex items-center gap-4">
-                    <button onclick="adjustBet(-1)" class="w-10 h-10 rounded-xl bg-dark-900 border border-white/10 text-white font-bold text-lg hover:bg-dark-800">-</button>
-                    <input type="number" id="finalAmount" value="1" class="w-20 text-center bg-transparent border-b border-violet-500 font-mono-num font-black text-2xl text-white outline-none">
-                    <button onclick="adjustBet(1)" class="w-10 h-10 rounded-xl bg-violet-600 text-white font-bold text-lg hover:bg-violet-500">+</button>
+    <div id="betConfirmModal" class="hidden-el fixed inset-0 z-[1000] bg-black/85 backdrop-blur-sm flex items-end">
+        <div class="bg-amoled-card w-full rounded-t-3xl p-6 border-t border-violet-500/30 space-y-4 animate-[slideUpFade_0.25s_ease-out] max-w-[480px] mx-auto">
+            <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                <div>
+                    <span id="betMarketNameDisplay" class="text-[10px] font-bold uppercase tracking-widest text-violet-400 block">WinGo 30s</span>
+                    <h3 id="selectedType" class="text-2xl font-black text-white uppercase mt-0.5">Green</h3>
+                </div>
+                <div class="text-right bg-dark-950 px-3 py-1.5 rounded-xl border border-white/5">
+                    <span class="text-[10px] text-slate-400 block uppercase font-bold">Balance</span>
+                    <span class="font-mono-num font-extrabold text-emerald-400 text-sm">৳<span class="userBalance">0.00</span></span>
                 </div>
             </div>
+
+            <!-- Quick Amount Presets -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Quick Presets</label>
+                <div class="grid grid-cols-5 gap-1.5">
+                    <button type="button" onclick="setQuickBetAmount(10)" class="py-2 rounded-lg bg-dark-900 border border-white/10 text-xs font-mono font-bold text-slate-300 hover:border-violet-500 hover:text-white">৳10</button>
+                    <button type="button" onclick="setQuickBetAmount(50)" class="py-2 rounded-lg bg-dark-900 border border-white/10 text-xs font-mono font-bold text-slate-300 hover:border-violet-500 hover:text-white">৳50</button>
+                    <button type="button" onclick="setQuickBetAmount(100)" class="py-2 rounded-lg bg-dark-900 border border-white/10 text-xs font-mono font-bold text-slate-300 hover:border-violet-500 hover:text-white">৳100</button>
+                    <button type="button" onclick="setQuickBetAmount(500)" class="py-2 rounded-lg bg-dark-900 border border-white/10 text-xs font-mono font-bold text-slate-300 hover:border-violet-500 hover:text-white">৳500</button>
+                    <button type="button" onclick="setQuickBetAmount(1000)" class="py-2 rounded-lg bg-dark-900 border border-white/10 text-xs font-mono font-bold text-slate-300 hover:border-violet-500 hover:text-white">৳1000</button>
+                </div>
+            </div>
+
+            <!-- Multipliers -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase">
+                    <span>Wager Amount</span>
+                    <span id="payoutMultiplierBadge" class="text-violet-400 font-mono">Expected Payout: 2X</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="multiplyBetAmount(0.5)" class="px-3 py-2.5 rounded-xl bg-dark-900 border border-white/10 text-slate-300 font-bold text-xs hover:border-violet-500">1/2X</button>
+                    <button type="button" onclick="multiplyBetAmount(2)" class="px-3 py-2.5 rounded-xl bg-dark-900 border border-white/10 text-slate-300 font-bold text-xs hover:border-violet-500">2X</button>
+                    <button type="button" onclick="multiplyBetAmount(5)" class="px-3 py-2.5 rounded-xl bg-dark-900 border border-white/10 text-slate-300 font-bold text-xs hover:border-violet-500">5X</button>
+                    <button type="button" onclick="multiplyBetAmount(10)" class="px-3 py-2.5 rounded-xl bg-dark-900 border border-white/10 text-slate-300 font-bold text-xs hover:border-violet-500">10X</button>
+
+                    <div class="flex items-center flex-1 bg-dark-950 border border-violet-500/50 rounded-xl px-2">
+                        <button type="button" onclick="adjustBet(-10)" class="w-8 h-8 font-bold text-white text-base">-</button>
+                        <input type="number" id="finalAmount" value="10" min="1" class="w-full text-center bg-transparent font-mono-num font-bold text-base text-white outline-none">
+                        <button type="button" onclick="adjustBet(10)" class="w-8 h-8 font-bold text-white text-base">+</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-3 pt-2">
-                <button onclick="hideModal('betConfirmModal')" class="py-3.5 rounded-xl bg-dark-900 border border-white/10 text-slate-400 font-bold text-xs uppercase">Cancel</button>
-                <button onclick="confirmBet()" class="py-3.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-violet-600/30">Confirm Bet</button>
+                <button type="button" onclick="hideModal('betConfirmModal')" class="py-3.5 rounded-xl bg-dark-900 border border-white/10 text-slate-400 font-bold text-xs uppercase">Cancel</button>
+                <button type="button" onclick="confirmBet()" class="py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-violet-600/30 transition active:scale-95">Confirm Wager</button>
             </div>
         </div>
     </div>
 
-    <!-- RESULT POPUP -->
-    <div id="resultPopup" class="hidden-el fixed inset-0 z-[9999] bg-black/85 backdrop-blur-sm flex items-center justify-center p-6">
-        <div id="confettiContainer"></div>
-        <div class="card-amoled w-full max-w-xs overflow-hidden text-center relative z-10 border-violet-500/40">
-            <div id="resHeader" class="py-8 bg-gradient-to-b from-emerald-600 to-emerald-800 text-white space-y-1">
-                <h3 id="resTitle" class="text-4xl font-black italic tracking-tight">WIN</h3>
-                <div id="resIcon" class="text-4xl">🏆</div>
+    <!-- PREMIUM RESULT POPUP -->
+    <div id="resultPopup" class="hidden-el fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div id="confettiContainer" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
+        <div id="resCard" class="card-amoled w-full max-w-sm rounded-3xl overflow-hidden text-center relative z-30 border-2 border-violet-500/40 shadow-2xl transition-all transform duration-300">
+            <div id="resHeader" class="py-6 px-4 bg-gradient-to-b from-violet-600 to-indigo-900 text-white space-y-2 relative">
+                <div id="resIcon" class="text-5xl my-1">🏆</div>
+                <h3 id="resTitle" class="text-2xl font-black italic tracking-tight text-white uppercase">ROUND COMPLETE</h3>
+                <span id="resPeriod" class="text-[11px] font-mono text-violet-200 block opacity-90">Period: --</span>
             </div>
-            <div class="p-6 space-y-4 bg-amoled-card">
-                <p id="resMsg" class="text-xs text-slate-400 uppercase tracking-wider font-bold">Payout Credited</p>
-                <h4 id="resAmount" class="text-3xl font-black text-emerald-400 font-mono-num">+ ৳0.00</h4>
-                <button onclick="closeResultPopup()" class="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md">Continue</button>
+            <div class="p-6 space-y-4 bg-[#0D101C]">
+                <div id="resNumBall" class="my-1"></div>
+                <p id="resMsg" class="text-xs text-slate-300 font-semibold leading-relaxed">Round outcome processed</p>
+                <h4 id="resAmount" class="text-4xl font-black text-emerald-400 font-mono-num drop-shadow-md">+ ৳0.00</h4>
+                <button onclick="closeResultPopup()" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-violet-600/30 active:scale-95 transition">
+                    Continue Game
+                </button>
             </div>
         </div>
     </div>
 
     <!-- GATEWAY MODAL (Recharge TrxID Submission) -->
-    <div id="gatewayModal" class="hidden-el fixed inset-0 z-[5000] bg-amoled-bg overflow-y-auto max-w-[480px] mx-auto flex flex-col min-h-screen">
-        <header class="p-4 flex items-center justify-between border-b border-amoled-border bg-amoled-card sticky top-0 z-20">
-            <button onclick="hideModal('gatewayModal')" class="text-slate-400 hover:text-white p-1 text-lg"><i class="fas fa-times"></i></button>
-            <h3 class="text-base font-bold text-white">Payment Gateway</h3>
-            <span id="gtCurrentTime" class="text-[11px] text-slate-400 font-mono"></span>
+    <div id="gatewayModal" class="hidden-el fixed inset-0 z-[5000] bg-[#eef2f5] overflow-y-auto max-w-[480px] mx-auto flex flex-col min-h-screen text-slate-900">
+        <!-- Top Branded Header -->
+        <header id="gtHeaderEl" class="bg-[#045934] text-white p-5 pt-7 flex justify-between items-start shadow-md relative">
+            <button onclick="hideModal('gatewayModal')" class="absolute top-2.5 right-3 text-white/80 hover:text-white p-2 text-base"><i class="fas fa-times"></i></button>
+            <div>
+                <div class="text-2xl font-black font-mono tracking-tight" id="gtDisplayAmountHeader">৳ 500 BDT</div>
+                <div class="text-xs font-semibold text-white/90 mt-1" id="gtDisplaySubtitleHeader">কম বা বেশি ক্যাশআউট করবেন না</div>
+            </div>
+            <div class="flex items-center gap-1.5 bg-white text-[#045934] px-2.5 py-1 rounded font-black text-[10px] uppercase tracking-wider shadow-sm mt-1">
+                <span>PAY</span><span class="text-slate-900 font-bold">SERVICE</span>
+            </div>
         </header>
 
-        <div class="p-4 space-y-4 flex-1">
-            <div id="gtColorBox" class="card-amoled p-5 space-y-4 bg-gradient-to-br from-[#1E1238] to-amoled-card border-violet-500/30">
-                <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                    <span class="text-xs text-slate-300 font-medium">Gateway Service</span>
-                    <span id="gtMethodNameText" class="text-sm font-bold text-white flex items-center gap-1.5"></span>
-                </div>
-                <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                    <span class="text-xs text-slate-300 font-medium">Send Money To</span>
-                    <div class="flex items-center gap-2">
-                        <span id="gtAdminPhone" class="font-mono-num font-bold text-violet-300 text-sm">...</span>
-                        <i onclick="copyText(document.getElementById('gtAdminPhone').innerText, 'Number')" class="far fa-copy text-slate-400 hover:text-white cursor-pointer"></i>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                    <span class="text-xs text-slate-300 font-medium">Exact Amount</span>
-                    <div class="flex items-center gap-2">
-                        <span class="font-mono-num font-extrabold text-emerald-400 text-lg">৳<span id="gtAmountStr">100</span></span>
-                        <i onclick="copyText(document.getElementById('gtAmountStr').innerText, 'Amount')" class="far fa-copy text-slate-400 hover:text-white cursor-pointer"></i>
-                    </div>
-                </div>
-
-                <div class="space-y-1.5 pt-1">
-                    <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300 block">Transaction TrxID</label>
-                    <input type="text" id="depTrx" class="w-full font-mono uppercase font-bold text-sm" placeholder="Paste 8-12 character TrxID">
-                </div>
-
-                <button onclick="submitGateway()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition">
-                    Submit Verification Request
-                </button>
+        <main class="p-5 space-y-4 flex-1">
+            <!-- Critical Warning -->
+            <div id="gtCriticalWarningText" class="text-[#d81e1e] font-extrabold text-sm leading-snug">
+                আপনি যদি টাকার পরিমাণ পরিবর্তন করেন, আপনি ক্রেডিট পেতে সক্ষম হবেন না।
             </div>
 
-            <div class="card-amoled p-4 space-y-2 text-xs text-slate-400 leading-relaxed">
-                <h4 class="font-bold text-white text-xs uppercase tracking-wider">Guidelines:</h4>
-                <p>1. Use <strong>Send Money</strong> from your personal wallet to the designated number above.</p>
-                <p>2. Paste the correct Transaction ID (TrxID) provided in the SMS confirmation.</p>
-                <p>3. Funds are reviewed and credited within 1-5 minutes automatically.</p>
+            <!-- Branded Provider Method Card -->
+            <div id="gtMethodCard" class="bg-[#e74738] rounded-2xl p-4 flex items-center gap-4 text-white shadow-lg shadow-rose-900/10 transition-all duration-300">
+                <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden shadow-inner">
+                    <span id="gtLogoTextFallback" class="font-black text-xs text-[#045934]">NG</span>
+                </div>
+                <div>
+                    <h3 id="gtMethodTitleText" class="text-xl font-bold tracking-tight">NAGAD Deposit</h3>
+                    <span id="gtTransferTypeBadge" class="inline-block bg-white/25 text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase mt-1">CASH OUT</span>
+                </div>
             </div>
-        </div>
+
+            <!-- Wallet Number Section -->
+            <section class="space-y-2 pt-1">
+                <div class="flex items-center gap-1 text-base font-bold text-slate-900">
+                    <span>Wallet No</span><span id="gtStarColor" class="text-[#8427e0] text-lg font-bold">*</span>
+                </div>
+                <p id="gtInstructionFullText" class="text-xs font-bold text-slate-800 leading-normal">
+                    এই নগদ এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে <span id="gtInstructionHighlightSpan" class="text-[#d81e1e] font-extrabold">ক্যাশ আউট</span> ব্যবহার করুন
+                </p>
+
+                <!-- Copyable Wallet Number Box -->
+                <div class="bg-[#f0f3f6] border border-slate-300 rounded-xl p-3.5 flex items-center justify-between shadow-sm">
+                    <span id="gtAdminPhone" class="text-lg font-extrabold font-mono text-slate-900 tracking-wider">01833527821</span>
+                    <button type="button" onclick="copyGatewayWalletNumber()" class="text-[#2e8b57] p-2 hover:bg-slate-200 rounded-lg relative transition flex items-center gap-1 font-bold text-xs">
+                        <i class="far fa-copy text-xl"></i>
+                        <span id="gtCopyTooltip" class="absolute -top-8 right-0 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 transition-opacity duration-200 pointer-events-none">কপি হয়েছে!</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TrxID Form -->
+            <section class="space-y-2 pt-2">
+                <label for="depTrx" class="text-xs font-extrabold text-slate-900 block">
+                    <span id="gtTrxLabelText">লেনদেনের TrxID নাম্বারটি লিখুন</span> <span class="text-[#d81e1e]">(প্রয়োজন)</span>
+                </label>
+                <div class="relative">
+                    <input type="text" id="depTrx" oninput="toggleGatewayConfirmBtnState()" autocomplete="off" spellcheck="false" placeholder="TrxID অবশ্যই পূরণ করতে হবে!" class="w-full h-12 border-2 border-[#d81e1e] rounded-xl px-4 text-sm font-bold text-slate-900 bg-white outline-none focus:ring-2 focus:ring-rose-500 font-mono uppercase">
+                </div>
+                <div class="pt-2 flex justify-center">
+                    <button type="button" id="gtConfirmSubmitBtn" onclick="submitGateway()" class="w-40 h-11 bg-white border border-slate-300 rounded-xl text-slate-500 font-bold text-sm hover:border-emerald-600 transition active:scale-95 shadow-sm">
+                        নিশ্চিত
+                    </button>
+                </div>
+            </section>
+
+            <!-- Disclaimer & Warnings -->
+            <section class="space-y-2 pt-2 text-xs">
+                <div>
+                    <p class="font-bold text-slate-900 text-xs mb-0.5">সতর্কতা:</p>
+                    <p id="gtWarningMsgText" class="text-[#d81e1e] font-bold text-xs leading-relaxed">
+                        লেনদেন আইডি সঠিকভাবে পূরণ করতে হবে, অন্যথায় স্কোর ব্যর্থ হবে!
+                    </p>
+                </div>
+                <p id="gtBottomNoteText" class="text-slate-500 text-[11px] leading-relaxed">
+                    অনুগ্রহ করে নিশ্চিত হয়ে নিন যে আপনি <strong class="text-slate-800 font-bold" id="gtBottomNoteProviderText">NAGAD deposit</strong> ওয়ালেট নাম্বারে ক্যাশ আউট করছেন।
+                </p>
+            </section>
+        </main>
     </div>
 
     <!-- SAFE BOX MODAL -->
@@ -2133,18 +2221,175 @@ const premiumAvatars = [
     'https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Darius.png'
 ];
 
-let isSoundMuted = false;
+let isSoundMuted = localStorage.getItem('bd99_sound_muted') === 'true';
+
+// Web Audio API Synthesizer Engine
+let audioCtx = null;
+function getAudioContext() {
+    if (!audioCtx) {
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtxClass) {
+            audioCtx = new AudioCtxClass();
+        }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+}
+
+function playAudioEffect(type) {
+    if (isSoundMuted) return;
+    try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        if (type === 'tick') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1200, now);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.08);
+        } else if (type === 'click' || type === 'tap') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(320, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.05);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
+        } else if (type === 'bet_place') {
+            [440, 880].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now + i * 0.06);
+                gain.gain.setValueAtTime(0.2, now + i * 0.06);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.12);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + i * 0.06);
+                osc.stop(now + i * 0.06 + 0.12);
+            });
+        } else if (type === 'win') {
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+                gain.gain.setValueAtTime(0.25, now + idx * 0.09);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + idx * 0.09);
+                osc.stop(now + idx * 0.09 + 0.25);
+            });
+        } else if (type === 'loss') {
+            [392.00, 311.13, 261.63].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                gain.gain.setValueAtTime(0.15, now + idx * 0.12);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.2);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + idx * 0.12);
+                osc.stop(now + idx * 0.12 + 0.2);
+            });
+        } else if (type === 'takeoff') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.4);
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        } else if (type === 'cashout') {
+            [659.25, 880.00, 1318.51].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+                gain.gain.setValueAtTime(0.22, now + idx * 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.18);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + idx * 0.05);
+                osc.stop(now + idx * 0.05 + 0.18);
+            });
+        } else if (type === 'crash') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        }
+    } catch (e) {
+        console.warn("Audio Effect Error:", e);
+    }
+}
+
+function toggleGlobalSound() {
+    isSoundMuted = !isSoundMuted;
+    localStorage.setItem('bd99_sound_muted', isSoundMuted ? 'true' : 'false');
+    updateSoundUI();
+    if (!isSoundMuted) {
+        playAudioEffect('click');
+    }
+}
+
+function toggleSound() {
+    toggleGlobalSound();
+}
+
+function updateSoundUI() {
+    const soundBtns = document.querySelectorAll('.sound-toggle-btn');
+    soundBtns.forEach(btn => {
+        btn.setAttribute('title', isSoundMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects');
+        const icon = btn.querySelector('.sound-toggle-icon');
+        if (icon) {
+            if (isSoundMuted) {
+                icon.className = 'fas fa-volume-xmark text-slate-500 sound-toggle-icon';
+            } else {
+                icon.className = 'fas fa-volume-high text-violet-400 sound-toggle-icon';
+            }
+        }
+    });
+}
 const marketConfigs = {
     '30s': { interval: 30, prefix: '30' },
     '1m':  { interval: 60, prefix: '01' },
+    '2m':  { interval: 120, prefix: '02' },
     '3m':  { interval: 180, prefix: '03' },
     '5m':  { interval: 300, prefix: '05' }
 };
 let currentMarket = '30s';
-let currentLivePeriods = { '30s': 0, '1m': 0, '3m': 0, '5m': 0 };
+let currentLivePeriods = { '30s': 0, '1m': 0, '2m': 0, '3m': 0, '5m': 0 };
 let historyData = [];
 let historyRef = null;
-let adminForcedResults = { '30s': null, '1m': null, '3m': null, '5m': null };
+let adminForcedResults = { '30s': null, '1m': null, '2m': null, '3m': null, '5m': null };
 let processedDisplayData = [];
 let globalCurrentPage = 1;
 let chartCurrentPage = 1;
@@ -2246,6 +2491,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Global Streams
     setupGlobalStreams();
     updateChannelList('Bkash');
+    updateSoundUI();
 });
 
 function showLandingPage() {
@@ -2307,6 +2553,7 @@ function setupGlobalStreams() {
             let data = s.val();
             adminForcedResults['30s'] = data.forcedResult_30s || data.forcedResult || null; 
             adminForcedResults['1m'] = data.forcedResult_1m || null; 
+            adminForcedResults['2m'] = data.forcedResult_2m || null;
             adminForcedResults['3m'] = data.forcedResult_3m || null; 
             adminForcedResults['5m'] = data.forcedResult_5m || null;
         } 
@@ -2738,13 +2985,26 @@ function switchGameCategory(cat) {
 // -------------------------------------------------------------------------
 // WINGO GAME LOGIC
 // -------------------------------------------------------------------------
+function openGame() {
+    if (!user) {
+        openAuthModal('login');
+        return;
+    }
+    const gamePage = document.getElementById('gamePage');
+    if (gamePage) {
+        gamePage.classList.remove('hidden-el');
+        switchMarket(currentMarket || '30s');
+    }
+}
+
 function switchMarket(m) {
     currentMarket = m;
-    ['30s', '1m', '3m', '5m'].forEach(k => {
+    ['30s', '1m', '2m', '3m', '5m'].forEach(k => {
         const btn = document.getElementById('market-btn-' + k);
-        if (btn) btn.className = k === m ? "market-btn market-btn-active py-2 rounded-lg text-xs font-bold text-white bg-violet-600" : "market-btn py-2 rounded-lg text-xs font-bold text-slate-400";
+        if (btn) btn.className = k === m ? "market-btn market-btn-active py-2 rounded-lg text-xs font-bold text-white bg-violet-600 shadow-md" : "market-btn py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white";
     });
-    document.getElementById('winGoTitleDisplay').innerText = `WinGo ${m}`;
+    const titleEl = document.getElementById('winGoTitleDisplay');
+    if (titleEl) titleEl.innerText = `WinGo ${m}`;
     globalCurrentPage = 1; chartCurrentPage = 1; personalHistoryCurrentPage = 1;
     fetchHistory();
 }
@@ -2765,35 +3025,43 @@ function initTimer() {
             const periodIdx = Math.floor(totalSeconds / conf.interval) + 1;
             const periodId = `${dateStr}${conf.prefix}${String(periodIdx).padStart(4, '0')}`;
 
-            if (currentLivePeriods[marketKey] !== 0 && periodId !== currentLivePeriods[marketKey]) {
+            if (currentLivePeriods[marketKey] && currentLivePeriods[marketKey] !== 0 && periodId !== currentLivePeriods[marketKey]) {
                 processResult(marketKey, currentLivePeriods[marketKey]);
             }
             currentLivePeriods[marketKey] = periodId;
 
             if (marketKey === currentMarket) {
-                document.getElementById('periodId').innerText = periodId;
+                const pEl = document.getElementById('periodId');
+                if (pEl) pEl.innerText = periodId;
                 const rem = conf.interval - (totalSeconds % conf.interval);
                 let minStr = Math.floor(rem / 60).toString().padStart(2, '0');
                 let secStr = (rem % 60).toString().padStart(2, '0');
-                document.getElementById('t-min-1').innerText = minStr[0];
-                document.getElementById('t-min-2').innerText = minStr[1];
-                document.getElementById('t-sec-1').innerText = secStr[0];
-                document.getElementById('t-sec-2').innerText = secStr[1];
+                
+                const m1 = document.getElementById('t-min-1');
+                const m2 = document.getElementById('t-min-2');
+                const s1 = document.getElementById('t-sec-1');
+                const s2 = document.getElementById('t-sec-2');
+                if (m1) m1.innerText = minStr[0];
+                if (m2) m2.innerText = minStr[1];
+                if (s1) s1.innerText = secStr[0];
+                if (s2) s2.innerText = secStr[1];
 
                 const lockOverlay = document.getElementById('bettingLockOverlay');
-                if (rem <= 5 && rem > 0) {
-                    lockOverlay.classList.remove('hidden-el');
-                    document.getElementById('countdown-digit-1').innerText = "0";
-                    document.getElementById('countdown-digit-2').innerText = rem;
-                    if (!isSoundMuted && !document.getElementById('gamePage').classList.contains('hidden-el')) {
-                        const audio = document.getElementById('tickSound');
-                        audio.currentTime = 0;
-                        audio.play().catch(() => {});
+                if (lockOverlay) {
+                    if (rem <= 5 && rem > 0) {
+                        lockOverlay.classList.remove('hidden-el');
+                        const cd1 = document.getElementById('countdown-digit-1');
+                        const cd2 = document.getElementById('countdown-digit-2');
+                        if (cd1) cd1.innerText = "0";
+                        if (cd2) cd2.innerText = rem;
+                        if (!isSoundMuted && !document.getElementById('gamePage').classList.contains('hidden-el')) {
+                            playAudioEffect('tick');
+                        }
+                    } else if (rem === 0) {
+                        lockOverlay.classList.remove('hidden-el');
+                    } else {
+                        lockOverlay.classList.add('hidden-el');
                     }
-                } else if (rem === 0) {
-                    lockOverlay.classList.remove('hidden-el');
-                } else {
-                    lockOverlay.classList.add('hidden-el');
                 }
             }
         });
@@ -2807,7 +3075,7 @@ function fetchHistory() {
     historyRef = database.ref(`global_history/${currentMarket}`).limitToLast(50);
     historyRef.on('value', s => {
         if (s.exists()) {
-            historyData = Object.values(s.val()).sort((a,b) => parseInt(b.period) - parseInt(a.period));
+            historyData = Object.values(s.val()).sort((a,b) => String(b.period).localeCompare(String(a.period)));
         } else {
             historyData = [];
         }
@@ -2817,54 +3085,40 @@ function fetchHistory() {
 }
 
 function updateDisplayData() {
-    let displayData = [];
-    let activePeriod = currentLivePeriods[currentMarket];
-    if (activePeriod && activePeriod !== 0) {
-        let activeStr = String(activePeriod);
-        let prefix = activeStr.substring(0, 10);
-        let indexPart = parseInt(activeStr.substring(10));
-        for (let i = 1; i <= 50; i++) {
-            let currentIdx = indexPart - i;
-            if (currentIdx <= 0) break;
-            let p = prefix + String(currentIdx).padStart(4, '0');
-            let dbRecord = historyData.find(x => x.period === p);
-            if (dbRecord) {
-                displayData.push(dbRecord);
-            } else {
-                let seed = parseInt(p.substring(10));
-                let x = Math.sin(seed * 12.9898) * 43758.5453;
-                let pseudoNum = Math.floor(Math.abs(x - Math.floor(x)) * 10);
-                displayData.push({ period: p, num: pseudoNum, size: pseudoNum >= 5 ? 'Big' : 'Small' });
-            }
-        }
-    } else {
-        displayData = historyData.slice(0, 50);
-    }
+    let displayData = [...historyData];
     processedDisplayData = displayData;
 
     let miniHtml = '';
-    for (let i = 0; i < 5; i++) {
-        if (displayData[i]) {
-            let n = displayData[i].num;
-            let bg = n === 0 || n === 5 ? 'bg-purple-600' : (n % 2 === 0 ? 'bg-rose-600' : 'bg-emerald-600');
-            miniHtml += `<div class="w-5 h-5 rounded-full ${bg} flex items-center justify-center text-[10px] font-black text-white shadow">${n}</div>`;
-        }
+    for (let i = 0; i < Math.min(5, displayData.length); i++) {
+        let n = parseInt(displayData[i].num);
+        let bg = n === 0 || n === 5 ? 'bg-purple-600' : (n % 2 === 0 ? 'bg-rose-600' : 'bg-emerald-600');
+        miniHtml += `<div class="w-5 h-5 rounded-full ${bg} flex items-center justify-center text-[10px] font-black text-white shadow">${n}</div>`;
     }
-    document.getElementById('recentBallsMini').innerHTML = miniHtml;
+    const recentCon = document.getElementById('recentBallsMini');
+    if (recentCon) recentCon.innerHTML = miniHtml;
 
-    if (!document.getElementById('globalHistoryContainer').classList.contains('hidden-el')) renderHistory();
-    else if (!document.getElementById('chartHistoryContainer').classList.contains('hidden-el')) renderChart();
+    const globalCon = document.getElementById('globalHistoryContainer');
+    const chartCon = document.getElementById('chartHistoryContainer');
+    const myCon = document.getElementById('personalHistoryContainer');
+
+    if (globalCon && !globalCon.classList.contains('hidden-el')) renderHistory();
+    else if (chartCon && !chartCon.classList.contains('hidden-el')) renderChart();
+    else if (myCon && !myCon.classList.contains('hidden-el')) renderMyHistory();
 }
 
 async function processResult(marketKey, targetPeriod) {
+    if (!targetPeriod) return;
     try {
         const snap = await database.ref(`global_history/${marketKey}/${targetPeriod}`).once('value');
         if (snap.exists()) return;
 
         let winningNum = 0;
         let forced = adminForcedResults[marketKey];
-        if (forced !== null && forced !== "") {
+        if (forced !== null && forced !== undefined && forced !== "") {
             winningNum = parseInt(forced);
+            database.ref('admin_control').update({
+                [marketKey === '30s' ? 'forcedResult_30s' : `forcedResult_${marketKey}`]: null
+            });
         } else {
             const betsSnap = await database.ref(`live_bets/${marketKey}/${targetPeriod}`).once('value');
             const bets = betsSnap.val();
@@ -2887,13 +3141,16 @@ async function processResult(marketKey, targetPeriod) {
                     if (payout < minPayout) { minPayout = payout; bestNums = [i]; }
                     else if (payout === minPayout) { bestNums.push(i); }
                 }
-                winningNum = bestNums[Math.floor(Math.random() * bestNums.length)];
+                winningNum = bestNums.length > 0 ? bestNums[Math.floor(Math.random() * bestNums.length)] : Math.floor(Math.random() * 10);
             }
         }
 
         const size = winningNum >= 5 ? 'Big' : 'Small';
+        const color = winningNum === 0 || winningNum === 5 ? 'Violet' : (winningNum % 2 === 0 ? 'Red' : 'Green');
+        const record = { period: String(targetPeriod), num: winningNum, size: size, color: color, timestamp: Date.now() };
+
         database.ref(`global_history/${marketKey}/${targetPeriod}`).transaction(currentData => {
-            if (currentData === null) return { period: targetPeriod, num: winningNum, size: size };
+            if (currentData === null) return record;
             return;
         });
     } catch (e) {
@@ -2901,35 +3158,76 @@ async function processResult(marketKey, targetPeriod) {
     }
 }
 
+function setQuickBetAmount(amt) {
+    const inp = document.getElementById('finalAmount');
+    if (inp) inp.value = amt;
+}
+
+function multiplyBetAmount(factor) {
+    const inp = document.getElementById('finalAmount');
+    if (!inp) return;
+    let curr = parseInt(inp.value) || 10;
+    let n = Math.floor(curr * factor);
+    if (n < 1) n = 1;
+    inp.value = n;
+}
+
 let currentBetSelection = null;
 function selectBet(val) {
-    if (!document.getElementById('bettingLockOverlay').classList.contains('hidden-el')) return;
+    const lockOverlay = document.getElementById('bettingLockOverlay');
+    if (lockOverlay && !lockOverlay.classList.contains('hidden-el')) return;
     currentBetSelection = val;
     const el = document.getElementById('selectedType');
-    el.innerText = val;
-    document.getElementById('betMarketNameDisplay').innerText = `WinGo ${currentMarket}`;
-    document.getElementById('betConfirmModal').classList.remove('hidden-el');
+    if (el) el.innerText = val;
+    const mEl = document.getElementById('betMarketNameDisplay');
+    if (mEl) mEl.innerText = `WinGo ${currentMarket}`;
+    
+    const badge = document.getElementById('payoutMultiplierBadge');
+    if (badge) {
+        if (typeof val === 'number' || (!isNaN(parseInt(val)) && parseInt(val) >= 0 && parseInt(val) <= 9)) {
+            badge.innerText = "Expected Payout: 9X";
+        } else if (val === 'Violet') {
+            badge.innerText = "Expected Payout: 4.5X";
+        } else if (val === 'Red' || val === 'Green') {
+            badge.innerText = "Expected Payout: 2X / 1.5X";
+        } else {
+            badge.innerText = "Expected Payout: 2X";
+        }
+    }
+
+    const inp = document.getElementById('finalAmount');
+    if (inp && (!inp.value || parseInt(inp.value) < 1)) inp.value = 10;
+
+    const modal = document.getElementById('betConfirmModal');
+    if (modal) modal.classList.remove('hidden-el');
 }
 
 function adjustBet(n) {
     let inp = document.getElementById('finalAmount');
+    if (!inp) return;
     let v = parseInt(inp.value) + n;
-    if (v < 1) v = 1;
+    if (isNaN(v) || v < 1) v = 1;
     inp.value = v;
 }
 
 function confirmBet() {
-    const amt = parseInt(document.getElementById('finalAmount').value);
-    if (user.balance < amt) return alert("Insufficient Balance!");
+    const inp = document.getElementById('finalAmount');
+    const amt = parseInt(inp ? inp.value : '1');
+    if (isNaN(amt) || amt < 1) return alert("Please enter a valid wager amount!");
+    if (!user) return alert("Please log in first!");
+    if (user.balance < amt) return alert("Insufficient Available Balance!");
 
-    user.balance -= amt;
+    user.balance = parseFloat((user.balance - amt).toFixed(2));
     let currWager = parseFloat(user.wager_left || 0) - amt;
     user.wager_left = currWager < 0 ? 0 : currWager;
 
     let activePeriod = currentLivePeriods[currentMarket];
+    if (!activePeriod) return alert("Period synchronization error. Please wait for timer tick.");
+
     const bet = {
+        id: 'WB' + Date.now() + Math.floor(Math.random() * 1000),
         market: currentMarket,
-        period: activePeriod,
+        period: String(activePeriod),
         selection: currentBetSelection,
         amount: amt,
         status: 'PENDING',
@@ -2950,15 +3248,19 @@ function confirmBet() {
         timestamp: Date.now()
     });
 
-    database.ref('users/' + user.phone).set(user);
-    hideModal('betConfirmModal');
-    renderMyHistory();
+    database.ref('users/' + user.phone).set(user).then(() => {
+        hideModal('betConfirmModal');
+        updateUI();
+        renderMyHistory();
+        playAudioEffect('bet_place');
+    });
 }
 
 function checkPendingBetsAgainstHistory() {
     if (!user || !user.betHistory) return;
     let updated = false;
     let totalWin = 0, totalLoss = 0;
+    let lastWinDetails = null, lastLossDetails = null;
 
     user.betHistory.forEach(b => {
         if (b.status === 'PENDING' && (b.market || '30s') === currentMarket) {
@@ -2971,21 +3273,25 @@ function checkPendingBetsAgainstHistory() {
 
                 let win = false;
                 let mult = 0;
-                if (String(b.selection) === String(num)) { win = true; mult = 9; }
-                else if (b.selection === size) { win = true; mult = 2; }
-                else if (b.selection === 'Green' && isGreen) { win = true; mult = (num === 5 ? 1.5 : 2); }
-                else if (b.selection === 'Red' && isRed) { win = true; mult = (num === 0 ? 1.5 : 2); }
-                else if (b.selection === 'Violet' && (num === 0 || num === 5)) { win = true; mult = 4.5; }
+                let selStr = String(b.selection);
+
+                if (selStr === String(num)) { win = true; mult = 9; }
+                else if (selStr === size) { win = true; mult = 2; }
+                else if (selStr === 'Green' && isGreen) { win = true; mult = (num === 5 ? 1.5 : 2); }
+                else if (selStr === 'Red' && isRed) { win = true; mult = (num === 0 ? 1.5 : 2); }
+                else if (selStr === 'Violet' && (num === 0 || num === 5)) { win = true; mult = 4.5; }
 
                 if (win) {
                     b.status = 'WIN';
-                    b.wonAmt = b.amount * mult * 0.98;
-                    user.balance += b.wonAmt;
+                    b.wonAmt = parseFloat((b.amount * mult * 0.98).toFixed(2));
+                    user.balance = parseFloat(((parseFloat(user.balance) || 0) + b.wonAmt).toFixed(2));
                     totalWin += b.wonAmt;
+                    lastWinDetails = { period: b.period, num: num, selection: b.selection };
                     realWinQueue.push({ name: user.name || user.phone, amount: b.wonAmt, avatar: user.avatar });
                 } else {
                     b.status = 'LOSS';
                     totalLoss += b.amount;
+                    lastLossDetails = { period: b.period, num: num, selection: b.selection };
                 }
                 updated = true;
             }
@@ -2996,8 +3302,8 @@ function checkPendingBetsAgainstHistory() {
         database.ref('users/' + user.phone).set(user).then(() => {
             updateUI();
             if (!document.getElementById('gamePage').classList.contains('hidden-el')) {
-                if (totalWin > 0) showResultPopup('win', totalWin);
-                else if (totalLoss > 0) showResultPopup('loss', totalLoss);
+                if (totalWin > 0) showResultPopup('win', totalWin, lastWinDetails);
+                else if (totalLoss > 0) showResultPopup('loss', totalLoss, lastLossDetails);
             }
         });
     }
@@ -3142,38 +3448,67 @@ function renderMyHistory() {
     div.innerHTML = html;
 }
 
-function showResultPopup(type, amt) {
+function showResultPopup(type, amt, details) {
     const popup = document.getElementById('resultPopup');
+    if (!popup) return;
     const header = document.getElementById('resHeader');
     const title = document.getElementById('resTitle');
     const icon = document.getElementById('resIcon');
     const msg = document.getElementById('resMsg');
     const amountEl = document.getElementById('resAmount');
+    const periodEl = document.getElementById('resPeriod');
+    const ballEl = document.getElementById('resNumBall');
     const confettiCon = document.getElementById('confettiContainer');
 
+    if (periodEl) periodEl.innerText = details && details.period ? `Period: ${details.period}` : `Market: WinGo ${currentMarket}`;
+
+    if (ballEl && details && details.num !== undefined) {
+        let n = parseInt(details.num);
+        let bg = n === 0 || n === 5 ? 'bg-purple-600' : (n % 2 === 0 ? 'bg-rose-600' : 'bg-emerald-600');
+        let colorName = n === 0 || n === 5 ? 'Violet' : (n % 2 === 0 ? 'Red' : 'Green');
+        let sizeName = n >= 5 ? 'Big' : 'Small';
+        ballEl.innerHTML = `
+            <div class="flex items-center justify-center gap-3">
+                <div class="w-12 h-12 rounded-full ${bg} text-white font-black text-2xl flex items-center justify-center shadow-lg border-2 border-white/20 font-mono-num">${n}</div>
+                <div class="text-left">
+                    <span class="text-xs font-bold text-white block uppercase">${colorName} · ${sizeName}</span>
+                    <span class="text-[10px] text-slate-400 font-mono">Winning Digit</span>
+                </div>
+            </div>`;
+    } else if (ballEl) {
+        ballEl.innerHTML = '';
+    }
+
     if (type === 'win') {
-        header.className = "py-8 bg-gradient-to-b from-emerald-600 to-emerald-800 text-white space-y-1";
-        title.innerText = "ROUND WON";
-        icon.innerText = "🏆";
-        msg.innerText = "Congratulations! Payout added to wallet";
-        amountEl.innerText = "+ ৳" + amt.toFixed(2);
-        amountEl.className = "text-3xl font-black text-emerald-400 font-mono-num";
+        if (header) header.className = "py-6 px-4 bg-gradient-to-b from-emerald-600 via-emerald-800 to-emerald-950 text-white space-y-1 relative";
+        if (title) title.innerText = "ROUND WON";
+        if (icon) icon.innerText = "🏆";
+        if (msg) msg.innerText = "Congratulations! Payout credited to your wallet";
+        if (amountEl) {
+            amountEl.innerText = "+ ৳" + parseFloat(amt).toFixed(2);
+            amountEl.className = "text-3xl font-black text-emerald-400 font-mono-num drop-shadow-md";
+        }
 
         let html = '';
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 30; i++) {
             let left = Math.random() * 100;
-            let animDelay = Math.random() * 2;
-            html += `<div class="confetti" style="left:${left}%; animation-delay:${animDelay}s;"></div>`;
+            let animDelay = Math.random() * 1.5;
+            let duration = 2 + Math.random() * 2;
+            let bgColors = ['#10B981', '#8B5CF6', '#EF4444', '#F59E0B', '#3B82F6'];
+            let bg = bgColors[Math.floor(Math.random() * bgColors.length)];
+            html += `<div class="confetti" style="left:${left}%; background-color:${bg}; animation-delay:${animDelay}s; animation-duration:${duration}s;"></div>`;
         }
-        confettiCon.innerHTML = html;
+        if (confettiCon) confettiCon.innerHTML = html;
     } else {
-        header.className = "py-8 bg-gradient-to-b from-rose-800 to-dark-900 text-white space-y-1";
-        title.innerText = "ROUND LOST";
-        icon.innerText = "💔";
-        msg.innerText = "Better luck on the next period!";
-        amountEl.innerText = "- ৳" + amt.toFixed(2);
-        amountEl.className = "text-3xl font-black text-rose-400 font-mono-num";
-        confettiCon.innerHTML = '';
+        if (header) header.className = "py-6 px-4 bg-gradient-to-b from-rose-800 via-rose-900 to-dark-950 text-white space-y-1 relative";
+        if (title) title.innerText = "ROUND LOST";
+        if (icon) icon.innerText = "💔";
+        if (msg) msg.innerText = "Better luck on the next period!";
+        if (amountEl) {
+            amountEl.innerText = "- ৳" + parseFloat(amt).toFixed(2);
+            amountEl.className = "text-3xl font-black text-rose-400 font-mono-num drop-shadow-md";
+        }
+        if (confettiCon) confettiCon.innerHTML = '';
     }
     popup.classList.remove('hidden-el');
 }
@@ -3394,10 +3729,20 @@ function removeActiveAmtBtn() {
     document.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('amt-btn-active'));
 }
 
+let selectedTransferType = 'send_money';
+let gatewaySettingsCache = {};
+
+// Stream deposit gateways config from Firebase
+database.ref('admin_settings/deposit_gateways').on('value', s => {
+    if (s.exists()) gatewaySettingsCache = s.val() || {};
+});
+
 function selectTopMethod(m) {
     selectedTopMethod = m;
-    document.getElementById('top-m-Bkash').classList.toggle('top-method-active', m === 'Bkash');
-    document.getElementById('top-m-Nagad').classList.toggle('top-method-active', m === 'Nagad');
+    const bkBtn = document.getElementById('top-m-Bkash');
+    const ngBtn = document.getElementById('top-m-Nagad');
+    if (bkBtn) bkBtn.classList.toggle('top-method-active', m === 'Bkash');
+    if (ngBtn) ngBtn.classList.toggle('top-method-active', m === 'Nagad');
     updateChannelList(m);
 }
 
@@ -3405,7 +3750,7 @@ function updateChannelList(m) {
     const grid = document.getElementById('channelGrid');
     if (!grid) return;
     grid.innerHTML = '';
-    const channels = channelData[m] || [];
+    const channels = channelData[m] || [{ name: 'CashPay-' + m }];
     channels.forEach((c, idx) => {
         const isAct = idx === 0 ? 'bg-violet-600/20 border-violet-500 text-violet-300' : 'bg-dark-900 border-white/5 text-slate-400';
         grid.innerHTML += `
@@ -3424,48 +3769,189 @@ function selectChannel(el, name) {
     el.className = "p-2.5 rounded-xl border border-violet-500 text-xs font-semibold bg-violet-600/20 text-violet-300 transition";
 }
 
+function selectTransferType(type) {
+    selectedTransferType = type;
+    const btnSm = document.getElementById('tt-btn-send_money');
+    const btnCo = document.getElementById('tt-btn-cash_out');
+    if (btnSm) {
+        btnSm.className = type === 'send_money' 
+            ? "p-3 rounded-xl border border-violet-500 text-xs font-bold bg-violet-600/20 text-violet-300 transition flex items-center justify-center gap-2"
+            : "p-3 rounded-xl border border-white/5 text-xs font-bold bg-dark-900 text-slate-400 transition flex items-center justify-center gap-2";
+    }
+    if (btnCo) {
+        btnCo.className = type === 'cash_out' 
+            ? "p-3 rounded-xl border border-violet-500 text-xs font-bold bg-violet-600/20 text-violet-300 transition flex items-center justify-center gap-2"
+            : "p-3 rounded-xl border border-white/5 text-xs font-bold bg-dark-900 text-slate-400 transition flex items-center justify-center gap-2";
+    }
+}
+
 function initiateDeposit() {
     const amt = parseFloat(document.getElementById('newDepAmountInput').value);
     if (isNaN(amt) || amt < 100) return alert("Minimum deposit amount is ৳100");
-    document.getElementById('gtAmountStr').innerText = amt;
-    document.getElementById('gtMethodNameText').innerText = selectedTopMethod;
-    document.getElementById('gtCurrentTime').innerText = new Date().toLocaleTimeString();
 
-    let num = "Contact Live Support";
-    if (depositNumbers) {
-        num = depositNumbers[selectedTopMethod] || depositNumbers[selectedTopMethod.toLowerCase()] || num;
+    const isNagad = selectedTopMethod.toLowerCase() === 'nagad';
+    const methodKey = isNagad ? 'Nagad' : 'Bkash';
+    const typeKey = selectedTransferType === 'cash_out' ? 'cash_out' : 'send_money';
+
+    // Fetch Gateway Numbers & Config
+    const gData = gatewaySettingsCache[methodKey] || {};
+    const typeConfig = gData[typeKey] || {};
+    let nums = typeConfig.numbers || [];
+    if (typeof nums === 'string') nums = [nums];
+    if (nums.length === 0) {
+        let legacyNum = depositNumbers ? (depositNumbers[methodKey] || depositNumbers[selectedTopMethod.toLowerCase()]) : null;
+        nums = legacyNum ? [legacyNum] : [isNagad ? "01833527821" : "01854529933"];
     }
-    document.getElementById('gtAdminPhone').innerText = num;
-    document.getElementById('depTrx').value = '';
+
+    // Allocation Rule (Rotation / Random)
+    let selectedNum = nums[0];
+    if (nums.length > 1) {
+        if (gData.rotationRule === 'random') {
+            selectedNum = nums[Math.floor(Math.random() * nums.length)];
+        } else {
+            let lastIdx = (gData.lastIndex || 0) % nums.length;
+            selectedNum = nums[lastIdx];
+            database.ref(`admin_settings/deposit_gateways/${methodKey}/lastIndex`).set((lastIdx + 1) % nums.length);
+        }
+    }
+
+    // UI Formatting
+    const headerEl = document.getElementById('gtHeaderEl');
+    const headerAmt = document.getElementById('gtDisplayAmountHeader');
+    const headerSub = document.getElementById('gtDisplaySubtitleHeader');
+    const methodCard = document.getElementById('gtMethodCard');
+    const methodTitle = document.getElementById('gtMethodTitleText');
+    const typeBadge = document.getElementById('gtTransferTypeBadge');
+    const logoFallback = document.getElementById('gtLogoTextFallback');
+    const instText = document.getElementById('gtInstructionFullText');
+    const adminPhoneEl = document.getElementById('gtAdminPhone');
+    const bottomProviderText = document.getElementById('gtBottomNoteProviderText');
+
+    if (headerAmt) headerAmt.innerText = `৳ ${amt.toLocaleString('en-IN')} BDT`;
+    if (adminPhoneEl) adminPhoneEl.innerText = selectedNum;
+
+    if (isNagad) {
+        if (headerEl) headerEl.className = "bg-[#045934] text-white p-5 pt-7 flex justify-between items-start shadow-md relative";
+        if (methodCard) methodCard.className = "bg-[#e74738] rounded-2xl p-4 flex items-center gap-4 text-white shadow-lg shadow-rose-900/10 transition-all duration-300";
+        if (methodTitle) methodTitle.innerText = "NAGAD Deposit";
+        if (logoFallback) { logoFallback.innerText = "NG"; logoFallback.className = "font-black text-xs text-[#045934]"; }
+        if (bottomProviderText) bottomProviderText.innerText = "NAGAD deposit";
+
+        if (typeKey === 'cash_out') {
+            if (headerSub) headerSub.innerText = "কম বা বেশি ক্যাশআউট করবেন না";
+            if (typeBadge) typeBadge.innerText = "CASH OUT";
+            if (instText) instText.innerHTML = 'এই নগদ এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে <span class="text-[#d81e1e] font-extrabold">ক্যাশ আউট</span> ব্যবহার করুন';
+        } else {
+            if (headerSub) headerSub.innerText = "কম বা বেশি সেন্ড মানি করবেন না";
+            if (typeBadge) typeBadge.innerText = "SEND MONEY";
+            if (instText) instText.innerHTML = 'এই নগদ অ্যাকাউন্টে টাকা পাঠাতে <span class="text-[#d81e1e] font-extrabold">সেন্ড মানি</span> ব্যবহার করুন';
+        }
+    } else {
+        if (headerEl) headerEl.className = "bg-[#005a36] text-white p-5 pt-7 flex justify-between items-start shadow-md relative";
+        if (methodCard) methodCard.className = "bg-[#b30068] rounded-2xl p-4 flex items-center gap-4 text-white shadow-lg shadow-pink-900/10 transition-all duration-300";
+        if (methodTitle) methodTitle.innerText = "BKASH Deposit";
+        if (logoFallback) { logoFallback.innerText = "bK"; logoFallback.className = "font-black text-xs text-[#b30068]"; }
+        if (bottomProviderText) bottomProviderText.innerText = "BKASH deposit";
+
+        if (typeKey === 'cash_out') {
+            if (headerSub) headerSub.innerText = "কম বা বেশি ক্যাশআউট করবেন না";
+            if (typeBadge) typeBadge.innerText = "CASH OUT";
+            if (instText) instText.innerHTML = 'এই BKASH এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে <span class="text-[#e1251b] font-extrabold">ক্যাশ আউট</span> ব্যবহার করুন';
+        } else {
+            if (headerSub) headerSub.innerText = "কম বা বেশি টাকা পাঠাবেন না";
+            if (typeBadge) typeBadge.innerText = "SEND MONEY";
+            if (instText) instText.innerHTML = 'এই BKASH নাম্বারে টাকা পাঠাতে <span class="text-[#e1251b] font-extrabold">সেন্ড মানি</span> ব্যবহার করুন';
+        }
+    }
+
+    const inputTrx = document.getElementById('depTrx');
+    if (inputTrx) { inputTrx.value = ''; inputTrx.focus(); }
+    toggleGatewayConfirmBtnState();
+
     document.getElementById('gatewayModal').classList.remove('hidden-el');
 }
 
+function copyGatewayWalletNumber() {
+    const num = document.getElementById('gtAdminPhone').innerText.trim();
+    if (!num) return;
+    navigator.clipboard.writeText(num);
+    const tip = document.getElementById('gtCopyTooltip');
+    if (tip) {
+        tip.style.opacity = '1';
+        setTimeout(() => tip.style.opacity = '0', 1600);
+    }
+}
+
+function toggleGatewayConfirmBtnState() {
+    const inp = document.getElementById('depTrx');
+    const btn = document.getElementById('gtConfirmSubmitBtn');
+    if (!inp || !btn) return;
+    if (inp.value.trim().length >= 6) {
+        btn.className = "w-40 h-11 bg-[#045934] border border-[#045934] rounded-xl text-white font-black text-sm transition active:scale-95 shadow-md cursor-pointer";
+    } else {
+        btn.className = "w-40 h-11 bg-white border border-slate-300 rounded-xl text-slate-500 font-bold text-sm transition shadow-sm cursor-pointer";
+    }
+}
+
 function submitGateway() {
-    const amt = parseFloat(document.getElementById('gtAmountStr').innerText);
-    const trx = document.getElementById('depTrx').value.trim();
-    if (!trx) return alert("Please provide the transaction TrxID");
+    const amtHeaderStr = document.getElementById('gtDisplayAmountHeader').innerText;
+    const amt = parseFloat(amtHeaderStr.replace(/[^\d.]/g, '')) || 100;
+    const trx = document.getElementById('depTrx').value.trim().toUpperCase();
+    const wallet = document.getElementById('gtAdminPhone').innerText.trim();
 
-    const orderNum = "RC" + Date.now();
-    const tx = {
-        type: 'Deposit',
-        amount: amt,
-        method: selectedTopMethod,
-        channel: selectedChannel,
-        trx: trx,
-        status: 'Pending',
-        date: new Date().toLocaleString(),
-        timestamp: Date.now(),
-        orderNum: orderNum,
-        wagerAdded: false
-    };
+    if (!trx || trx.length < 6) {
+        alert("সঠিক TrxID প্রদান করুন (সর্বনিম্ন ৬ অক্ষর)!");
+        return;
+    }
 
-    if (!user.transactions) user.transactions = [];
-    user.transactions.unshift(tx);
+    // Duplicate TrxID Check against database
+    database.ref('transactions').orderByChild('trxId').equalTo(trx).once('value', s => {
+        if (s.exists()) {
+            alert("⚠️ এই TrxID আগে থেকেই জমা দেওয়া হয়েছে! অন্য TrxID দিয়ে চেষ্টা করুন।");
+            return;
+        }
 
-    database.ref('users/' + user.phone).set(user).then(() => {
-        alert("Deposit request submitted! Once verified by accounts, your balance will be credited.");
-        hideModal('gatewayModal');
-        showHistoryModal('Deposit');
+        const orderNum = "RC" + Date.now();
+        const tx = {
+            type: 'Deposit',
+            amount: amt,
+            method: selectedTopMethod,
+            transferType: selectedTransferType,
+            channel: selectedChannel,
+            trx: trx,
+            trxId: trx,
+            wallet: wallet,
+            status: 'Pending',
+            date: new Date().toLocaleString(),
+            timestamp: Date.now(),
+            orderNum: orderNum,
+            wagerAdded: false
+        };
+
+        if (!user.transactions) user.transactions = [];
+        user.transactions.unshift(tx);
+
+        // Save to global transactions node for Admin
+        database.ref('transactions').push({
+            phone: user.phone,
+            uid: user.uid,
+            trxId: trx,
+            trx: trx,
+            wallet: wallet,
+            method: selectedTopMethod,
+            transferType: selectedTransferType,
+            amount: amt,
+            status: 'Pending',
+            date: new Date().toLocaleString(),
+            timestamp: Date.now()
+        });
+
+        // Save to User Profile
+        database.ref('users/' + user.phone).set(user).then(() => {
+            alert("✅ লেনদেন সফলভাবে জমা হয়েছে! যাচাই করা হচ্ছে...");
+            hideModal('gatewayModal');
+            showHistoryModal('Deposit');
+        });
     });
 }
 
@@ -3879,6 +4365,7 @@ function startFlightAv() {
     document.getElementById('avFlewAwayLabel').style.display = 'none';
     document.getElementById('avMultiplierDisplay').style.color = '#FFFFFF';
 
+    playAudioEffect('takeoff');
     activateQueuedBetsAv();
     avAnimationFrame = requestAnimationFrame(loopAv);
 }
@@ -3888,6 +4375,7 @@ function triggerCrashAv() {
     document.getElementById('avFlewAwayLabel').style.display = 'block';
     document.getElementById('avMultiplierDisplay').style.color = '#F43F5E';
 
+    playAudioEffect('crash');
     handleLostBetsAv();
     addHistoryPillAv(avCurrentMultiplier);
     setTimeout(() => {
@@ -3947,6 +4435,7 @@ function handleBetAv(box) {
         avBets[box].state = 'cashed';
         btn.className = 'w-28 h-20 rounded-2xl bg-dark-800 text-emerald-400 font-black text-xs uppercase flex flex-col items-center justify-center';
         btn.innerHTML = `CASHED <span class="text-[10px]">${won.toFixed(2)} ৳</span>`;
+        playAudioEffect('cashout');
         saveMyBetAv(avBets[box].amt, avCurrentMultiplier, won);
     }
 }
@@ -4304,19 +4793,151 @@ function changeAppLanguage(lang) {
     closeLanguageModal();
 }
 
-function renderBanners(images) {
-    const c = document.getElementById('homeBannerSliderContainer');
-    if (!c || images.length === 0) return;
-    c.innerHTML = images.map((src, i) => `<img src="${src}" class="slider-img ${i === 0 ? 'opacity-100' : 'opacity-0'}" id="slide-img-${i}">`).join('');
-    let idx = 0;
-    if (images.length > 1) {
-        setInterval(() => {
-            const oldImg = document.getElementById(`slide-img-${idx}`);
-            if (oldImg) oldImg.classList.replace('opacity-100', 'opacity-0');
-            idx = (idx + 1) % images.length;
-            const newImg = document.getElementById(`slide-img-${idx}`);
-            if (newImg) newImg.classList.replace('opacity-0', 'opacity-100');
-        }, 4000);
+const defaultBengaliBanners = [
+    {
+        id: "banner-hero",
+        badge: "ভিআইপি রিওয়ার্ডস",
+        headline: "বাংলাদেশের ১ নম্বর বিশ্বস্ত অনলাইন গেমিং ক্লাব",
+        subtitle: "ইনস্ট্যান্ট ৳৩০ ওয়েলকাম বোনাস, ২৪/৭ ফাস্ট পে-আউট এবং এক্সক্লুসিভ রিওয়ার্ডস!",
+        ctaText: "এখনই জয়েন করুন (৳৩০ বোনাস)",
+        ctaAction: "openAuthModal('reg')",
+        imgUrl: "/assets/images/bengali_hero_banner_1793147530246.jpg",
+        accentColor: "from-amber-500 to-yellow-600",
+        badgeBg: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+        animStyle: "3d-tilt",
+        active: true
+    },
+    {
+        id: "banner-wingo",
+        badge: "WinGo লটারি",
+        headline: "WinGo কালার প্রেডিকশন - ৯.৮X রিটার্ন সুযোগ!",
+        subtitle: "৩০ সেকেণ্ড, ১ মিনিট এবং ৩ মিনিটের লাইভ প্রেডিকশন লটারি ড্র!",
+        ctaText: "WinGo খেলুন",
+        ctaAction: "openGame()",
+        imgUrl: "/assets/images/wingo_color_banner_1793147547541.jpg",
+        accentColor: "from-violet-500 to-fuchsia-600",
+        badgeBg: "bg-violet-500/20 text-violet-300 border-violet-500/30",
+        animStyle: "glow-pulse",
+        active: true
+    },
+    {
+        id: "banner-aviator",
+        badge: "Aviator ফ্লাইট",
+        headline: "Aviator হাই-ফ্লাইট ক্যাশআউট - আকাশ ছোঁয়া জয়!",
+        subtitle: "প্লেন বিস্ফোরণের আগেই সঠিক সময় ক্যাশআউট করুন এবং মাল্টিপ্লায়ার জিতুন!",
+        ctaText: "Aviator ফ্লাইট টেক-অফ",
+        ctaAction: "openAviatorLoading()",
+        imgUrl: "/assets/images/aviator_flight_banner_1793147561730.jpg",
+        accentColor: "from-rose-500 to-red-600",
+        badgeBg: "bg-rose-500/20 text-rose-300 border-rose-500/30",
+        animStyle: "zoom-depth",
+        active: true
+    }
+];
+
+let bannerTimerInterval = null;
+let currentBannerIndex = 0;
+
+function renderBanners(bannerDataList) {
+    const container = document.getElementById('homeBannerSliderContainer');
+    if (!container) return;
+
+    let banners = [];
+    if (bannerDataList && Array.isArray(bannerDataList) && bannerDataList.length > 0) {
+        if (typeof bannerDataList[0] === 'string') {
+            banners = bannerDataList.map((src, i) => ({
+                id: `banner-${i}`,
+                badge: "OFFICIAL PROMO",
+                headline: "NEXUS WIN অনলাইন গেমিং প্ল্যাটফর্মে স্বাগতম!",
+                subtitle: "২৪/৭ ইনস্ট্যান্ট ডিপোজিট ও উইথড্রয়াল সুবিধা।",
+                ctaText: "গেম খেলুন",
+                ctaAction: "openGame()",
+                imgUrl: src,
+                badgeBg: "bg-violet-500/20 text-violet-300 border-violet-500/30",
+                active: true
+            }));
+        } else {
+            banners = bannerDataList.filter(b => b && b.active !== false);
+        }
+    }
+
+    if (banners.length === 0) {
+        banners = defaultBengaliBanners;
+    }
+
+    // Render HTML Slides
+    let slidesHtml = '';
+    banners.forEach((b, i) => {
+        let isAct = i === 0;
+        slidesHtml += `
+            <div id="banner-slide-${i}" class="absolute inset-0 transition-all duration-700 ease-out flex flex-col justify-end p-4 bg-cover bg-center ${isAct ? 'opacity-100 scale-100 z-10 pointer-events-auto' : 'opacity-0 scale-95 z-0 pointer-events-none'}" style="background-image: linear-gradient(180deg, rgba(7, 8, 12, 0.2) 0%, rgba(7, 8, 12, 0.85) 100%), url('${b.imgUrl || b.src}')">
+                <!-- 3D Neon Aura Glow -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#07080C] via-transparent to-transparent opacity-80 pointer-events-none"></div>
+
+                <!-- Banner Content -->
+                <div class="relative z-20 space-y-1 transform transition-all duration-500 ${isAct ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/20 backdrop-blur-md shadow-sm ${b.badgeBg || 'bg-violet-600/30 text-white'}">
+                            ${b.badge || 'PROMO'}
+                        </span>
+                    </div>
+
+                    <h2 class="text-sm sm:text-base font-black italic tracking-tight text-white leading-tight drop-shadow-md">
+                        ${b.headline || ''}
+                    </h2>
+
+                    <p class="text-[10px] text-slate-300 font-medium line-clamp-1 drop-shadow">
+                        ${b.subtitle || ''}
+                    </p>
+
+                    <div class="pt-1.5 flex items-center gap-2">
+                        <button onclick="${b.ctaAction || "switchTab('home')"}" class="px-3 py-1.5 rounded-lg text-[10px] font-extrabold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-md shadow-violet-600/30 transition active:scale-95 flex items-center gap-1">
+                            <span>${b.ctaText || 'অংশ নিন'}</span>
+                            <i class="fas fa-chevron-right text-[8px]"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+    });
+
+    // Render Dots Indicator
+    let dotsHtml = `<div class="absolute bottom-2 right-3 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10">`;
+    banners.forEach((_, i) => {
+        dotsHtml += `<button onclick="switchBannerSlide(${i})" id="banner-dot-${i}" class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-amber-400 w-4' : 'bg-white/40'}"></button>`;
+    });
+    dotsHtml += `</div>`;
+
+    container.innerHTML = slidesHtml + dotsHtml;
+
+    // Auto Interval
+    if (bannerTimerInterval) clearInterval(bannerTimerInterval);
+    currentBannerIndex = 0;
+    if (banners.length > 1) {
+        bannerTimerInterval = setInterval(() => {
+            let nextIdx = (currentBannerIndex + 1) % banners.length;
+            switchBannerSlide(nextIdx, banners.length);
+        }, 4500);
+    }
+}
+
+function switchBannerSlide(nextIdx, total = 3) {
+    const oldSlide = document.getElementById(`banner-slide-${currentBannerIndex}`);
+    const oldDot = document.getElementById(`banner-dot-${currentBannerIndex}`);
+    if (oldSlide) {
+        oldSlide.className = oldSlide.className.replace('opacity-100 scale-100 z-10 pointer-events-auto', 'opacity-0 scale-95 z-0 pointer-events-none');
+    }
+    if (oldDot) {
+        oldDot.className = "w-1.5 h-1.5 rounded-full transition-all duration-300 bg-white/40";
+    }
+
+    currentBannerIndex = nextIdx;
+    const newSlide = document.getElementById(`banner-slide-${currentBannerIndex}`);
+    const newDot = document.getElementById(`banner-dot-${currentBannerIndex}`);
+    if (newSlide) {
+        newSlide.className = newSlide.className.replace('opacity-0 scale-95 z-0 pointer-events-none', 'opacity-100 scale-100 z-10 pointer-events-auto');
+    }
+    if (newDot) {
+        newDot.className = "w-4 h-1.5 rounded-full transition-all duration-300 bg-amber-400";
     }
 }
 

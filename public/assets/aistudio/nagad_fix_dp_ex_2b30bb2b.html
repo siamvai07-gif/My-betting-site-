@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>NAGAD Deposit - Pay Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hind Siliguri',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;background:#eef2f5;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;color:#0f172a}
+::selection{background:#d61919;color:#fff}
+.mobile-frame{width:100%;max-width:440px;min-height:100vh;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;position:relative}
+.header{background:#045934;color:#fff;padding:32px 20px 14px;display:flex;justify-content:space-between;align-items:flex-start;box-shadow:0 4px 12px rgba(4,89,52,.25);user-select:none}
+.header-left .amount{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.header-left .subtitle{font-size:13px;font-weight:600;color:rgba(255,255,255,.95);margin-top:2px;line-height:1.3}
+.service-badge{display:flex;align-items:center;gap:6px;margin-top:2px}
+.service-badge .badge{background:#fff;color:#045934;font-weight:900;font-size:11px;padding:2px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase;line-height:1.4}
+.service-badge .label{color:#fff;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.main{flex:1;padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px}
+.critical-warning{color:#d81e1e;font-weight:700;font-size:15px;line-height:1.4}
+.method-card{background:#e74738;border-radius:16px;padding:16px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 8px rgba(231,71,56,.2)}
+.method-card .logo-emblem{width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:4px;overflow:hidden}
+.method-card .logo-emblem img{width:100%;height:100%;object-fit:contain}
+.method-card .logo-emblem .fallback-svg{width:36px;height:36px}
+.method-card .card-title{color:#fff;font-size:20px;font-weight:700}
+.type-badge{display:inline-block;background:rgba(255,255,255,0.25);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;margin-top:4px;text-transform:uppercase;}
+.wallet-section{padding-top:4px;display:flex;flex-direction:column;gap:8px}
+.wallet-section .wallet-head{display:flex;align-items:center;gap:4px}
+.wallet-section .wallet-head .label{font-size:17px;font-weight:700;color:#000}
+.wallet-section .wallet-head .star{color:#8427e0;font-weight:700;font-size:20px;line-height:1}
+.wallet-section .instruction-text{font-size:14px;font-weight:600;color:#000;line-height:1.5}
+.wallet-section .instruction-text .highlight{color:#d81e1e;font-weight:700}
+.wallet-box{background:#f0f3f6;border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border:1px solid #e2e8f0}
+.wallet-box .number{font-size:18px;font-weight:700;letter-spacing:.06em;font-family:'Inter',monospace;color:#1e293b;user-select:all}
+.wallet-box .copy-btn{background:transparent;border:none;padding:6px;border-radius:8px;cursor:pointer;color:#2e8b57;position:relative;display:flex;align-items:center;justify-content:center}
+.wallet-box .copy-btn svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.copy-tooltip{position:absolute;top:-36px;left:50%;transform:translateX(-50%);background:#000;color:#fff;font-size:11px;padding:4px 12px;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity .2s}
+.copy-tooltip.visible{opacity:1}
+.trx-section{display:flex;flex-direction:column;gap:8px;padding-top:8px}
+.trx-section label{font-size:15px;font-weight:700;color:#000}
+.trx-section label .required{color:#d81e1e;font-weight:700}
+.trx-section .input-wrap input{width:100%;height:48px;border:2px solid #d81e1e;border-radius:12px;padding:0 16px;font-size:16px;font-weight:500;color:#0f172a;background:#fff;outline:none;font-family:'Hind Siliguri',sans-serif}
+.trx-section .input-wrap input::placeholder{color:#94a3b8;font-weight:500}
+.trx-section .confirm-wrap{display:flex;justify-content:center;padding-top:8px}
+.trx-section .confirm-btn{width:160px;height:44px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;color:#64748b;font-size:16px;font-weight:600;cursor:pointer;font-family:'Hind Siliguri',sans-serif}
+.trx-section .confirm-btn.active{background:#045934;border-color:#045934;color:#fff}
+.disclaimer{display:flex;flex-direction:column;gap:12px;padding-top:8px}
+.disclaimer .warning-title{font-weight:700;color:#000;font-size:15px}
+.disclaimer .warning-msg{color:#d81e1e;font-weight:700;font-size:14px;line-height:1.4}
+.disclaimer .bottom-note{color:#64748b;font-size:13.5px;font-weight:500;line-height:1.6}
+.disclaimer .bottom-note .strong{font-weight:600;color:#334155}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,.92);color:#fff;font-size:13px;padding:10px 24px;border-radius:40px;box-shadow:0 8px 32px rgba(0,0,0,.25);opacity:0;transition:opacity .25s;pointer-events:none;z-index:50;font-weight:500;max-width:90%;text-align:center}
+.toast.visible{opacity:1}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s}
+.loading-overlay.visible{opacity:1;pointer-events:auto}
+.loading-spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#045934;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div></div>
+<div class="toast" id="toast"></div>
+<div class="mobile-frame">
+  <header class="header">
+    <div class="header-left">
+      <div class="amount" id="displayAmount">৳ 500 BDT</div>
+      <div class="subtitle" id="displaySubtitle">কম বা বেশি ক্যাশআউট করবেন না</div>
+    </div>
+    <div class="service-badge"><span class="badge" id="displayBadge">PAY</span><span class="label">SERVICE</span></div>
+  </header>
+  <main class="main">
+    <div class="critical-warning" id="displayCriticalWarning">আপনি যদি টাকার পরিমাণ পরিবর্তন করেন, আপনি ক্রেডিট পেতে সক্ষম হবেন না।</div>
+    <section class="method-card">
+      <div class="logo-emblem">
+        <svg class="fallback-svg" viewBox="0 0 100 100" id="fallbackLogo"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#238249" stroke-width="4"/><path d="M50 18C32 18 20 32 20 50C20 62 26 72 35 77C33 70 34 62 38 56C42 50 49 46 54 41C60 36 63 30 62 24C58 20 54 18 50 18Z" fill="#eb4826"/><path d="M52 28C50 35 44 40 40 45C35 51 34 58 37 66C41 73 48 78 57 77C68 76 77 67 77 56C77 44 69 33 58 30C56 29 54 28 52 28Z" fill="#eb8026"/><circle cx="50" cy="50" r="10" fill="#d9241b"/></svg>
+        <img id="logoImage" style="display:none;width:100%;height:100%;object-fit:contain" alt="Logo" />
+      </div>
+      <div>
+        <h3 class="card-title" id="displayMethodTitle">NAGAD Deposit</h3>
+        <span class="type-badge" id="displayTypeBadge">CASH OUT</span>
+      </div>
+    </section>
+    <section class="wallet-section">
+      <div class="wallet-head"><span class="label" id="displayWalletLabel">Wallet No</span><span class="star">*</span></div>
+      <p class="instruction-text" id="displayInstruction">এই নগদ এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে <span class="highlight" id="displayInstructionHighlight">ক্যাশ আউট</span> ব্যবহার করুন</p>
+      <div class="wallet-box">
+        <span class="number" id="displayWalletNumber">01833527821</span>
+        <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy"><svg viewBox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg><span class="copy-tooltip" id="copyTooltip">কপি হয়েছে!</span></button>
+      </div>
+    </section>
+    <section class="trx-section">
+      <label for="trxIdInput"><span id="displayTrxLabel">লেনদেনের TrxID নাম্বারটি লিখুন</span> <span class="required">(প্রয়োজন)</span></label>
+      <div class="input-wrap"><input type="text" id="trxIdInput" autocomplete="off" spellcheck="false" placeholder="TrxID অবশ্যই পূরণ করতে হবে!" /></div>
+      <div class="confirm-wrap"><button class="confirm-btn" id="confirmBtn" type="button">নিশ্চিত</button></div>
+    </section>
+    <section class="disclaimer">
+      <div><p class="warning-title" id="displayWarningTitle">সতর্কতা:</p><p class="warning-msg" id="displayWarningMsg">লেনদেন আইডি সঠিকভাবে পূরণ করতে হবে, অন্যথায় স্কোর ব্যর্থ হবে!</p></div>
+      <p class="bottom-note" id="displayBottomNote">অনুগ্রহ করে নিশ্চিত হয়ে নিন যে আপনি <span class="strong">NAGAD deposit</span> ওয়ালেট নাম্বারে ক্যাশ আউট করছেন।</p>
+    </section>
+  </main>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+  var firebaseConfig = {
+    apiKey: "AIzaSyBGaFtX-4JYrW_rhKLn--_hHgo1I2UdGGE",
+    authDomain: "luckyspin-5ff98.firebaseapp.com",
+    databaseURL: "https://luckyspin-5ff98-default-rtdb.firebaseio.com",
+    projectId: "luckyspin-5ff98",
+    storageBucket: "luckyspin-5ff98.firebasestorage.app",
+    messagingSenderId: "653880368423",
+    appId: "1:653880368423:web:5efc8fc2f06d0bd7765d02"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  var db = firebase.database();
+  var METHOD = 'nagad';
+  var URLP; try { URLP = new URLSearchParams(location.search); } catch(e){ URLP = {get:function(){return null;}}; }
+  function safeNum(v){ if(v==null)return null; var n=parseFloat(String(v).replace(/[^\d.]/g,'')); if(!isFinite(n)||n<=0||n>100000000)return null; return Math.round(n*100)/100; }
+  var URL_AMOUNT = safeNum(URLP.get('amount')) || 500;
+  var URL_TYPE = (URLP.get('type') || 'cash_out').toLowerCase();
+  var URL_CURRENCY = (URLP.get('currency')||'BDT').toUpperCase();
+  var URL_PID = String(URLP.get('rx_pid')||'');
+  var PM_AMOUNT = null, PM_CURRENCY = null;
+  function currentAmount(){ return PM_AMOUNT!=null ? PM_AMOUNT : URL_AMOUNT; }
+  function currentCurrency(){ return PM_CURRENCY || URL_CURRENCY || 'BDT'; }
+  function fmtAmount(n){
+    if(n==null) return '';
+    var num = Number(n).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});
+    return '\u09F3 '+num+' '+currentCurrency();
+  }
+  var $ = function(id){return document.getElementById(id);};
+  var elAmt=$('displayAmount'), elSub=$('displaySubtitle'), elBadge=$('displayBadge'),
+      elCW=$('displayCriticalWarning'), elTitle=$('displayMethodTitle'), elTB=$('displayTypeBadge'), elWL=$('displayWalletLabel'),
+      elInst=$('displayInstruction'), elInstHi=$('displayInstructionHighlight'), elWN=$('displayWalletNumber'), elTL=$('displayTrxLabel'),
+      elWT=$('displayWarningTitle'), elWM=$('displayWarningMsg'), elBN=$('displayBottomNote'),
+      trxInput=$('trxIdInput'), confirmBtn=$('confirmBtn'), toast=$('toast'),
+      copyBtn=$('copyBtn'), copyTip=$('copyTooltip'), lo=$('loadingOverlay'),
+      logoImg=$('logoImage'), fbLogo=$('fallbackLogo');
+
+  function showToast(m,d){ d=d||2200; toast.textContent=m; toast.classList.add('visible'); clearTimeout(toast._t); toast._t=setTimeout(function(){toast.classList.remove('visible');},d); }
+  function setLoading(s){ lo.classList.toggle('visible', !!s); }
+
+  copyBtn.addEventListener('click', function(){
+    var num = elWN.textContent.trim();
+    function ok(){ copyTip.classList.add('visible'); setTimeout(function(){copyTip.classList.remove('visible');},1600); }
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(num).then(ok).catch(function(){fb(num);ok();});
+    else { fb(num); ok(); }
+    function fb(t){ var i=document.createElement('input');i.value=t;document.body.appendChild(i);i.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(i); }
+  });
+
+  trxInput.addEventListener('input', function(){
+    if(this.value.trim().length>=6) confirmBtn.classList.add('active'); else confirmBtn.classList.remove('active');
+  });
+
+  confirmBtn.addEventListener('click', function(){
+    var v = trxInput.value.trim().toUpperCase();
+    if(!v || v.length < 6){ showToast('সঠিক TrxID প্রদান করুন (সর্বনিম্ন ৬ অক্ষর)!'); trxInput.focus(); return; }
+    var wallet = elWN.textContent.trim();
+    var amt = currentAmount();
+
+    setLoading(true);
+    // Duplicate check
+    db.ref('transactions').orderByChild('trxId').equalTo(v).once('value', function(snap){
+      if(snap.exists()){
+        setLoading(false);
+        showToast('⚠️ এই TrxID আগে থেকেই জমা দেওয়া হয়েছে!');
+        return;
+      }
+
+      var data = {
+        trxId: v,
+        trx: v,
+        wallet: wallet,
+        method: 'Nagad',
+        transferType: URL_TYPE,
+        amount: amt,
+        currency: currentCurrency(),
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        date: new Date().toLocaleString(),
+        status: 'Pending'
+      };
+
+      db.ref('transactions').push(data).then(function(){
+        setLoading(false);
+        showToast('✅ লেনদেন সফলভাবে জমা হয়েছে! যাচাই করা হচ্ছে...');
+        trxInput.value=''; confirmBtn.classList.remove('active');
+        try{
+          window.parent.postMessage({
+            rx:'deposit-submitted', amount:amt, currency:currentCurrency(),
+            method:'Nagad', transferType:URL_TYPE, trxId:v, status:'pending'
+          },'*');
+        }catch(er){}
+      }).catch(function(err){
+        setLoading(false); console.error('Firebase write error:', err);
+        showToast('⚠️ সংযোগ সমস্যা, আবার চেষ্টা করুন');
+      });
+    });
+  });
+
+  // Load gateway numbers & rotation settings
+  setLoading(true);
+  db.ref('admin_settings/deposit_gateways/Nagad').on('value', function(snap){
+    var gData = snap.val() || {};
+    var typeConfig = gData[URL_TYPE] || gData['cash_out'] || {};
+    var nums = typeConfig.numbers || ["01833527821"];
+    if (typeof nums === 'string') nums = [nums];
+    var selectedNum = nums[0] || "01833527821";
+
+    if (nums.length > 1) {
+      if (gData.rotationRule === 'random') {
+        selectedNum = nums[Math.floor(Math.random() * nums.length)];
+      } else {
+        var lastIdx = (gData.lastIndex || 0) % nums.length;
+        selectedNum = nums[lastIdx];
+        db.ref('admin_settings/deposit_gateways/Nagad/lastIndex').set((lastIdx + 1) % nums.length);
+      }
+    }
+
+    elWN.textContent = selectedNum;
+    elAmt.textContent = fmtAmount(currentAmount());
+    elTB.textContent = URL_TYPE === 'send_money' ? 'SEND MONEY' : 'CASH OUT';
+    if (URL_TYPE === 'send_money') {
+      elInst.innerHTML = 'এই নগদ অ্যাকাউন্টে টাকা পাঠাতে <span class="highlight">সেন্ড মানি</span> ব্যবহার করুন';
+      elSub.textContent = 'কম বা বেশি সেন্ড মানি করবেন না';
+    } else {
+      elInst.innerHTML = 'এই নগদ এজেন্ট অ্যাকাউন্টে অর্থ প্রদান করতে <span class="highlight">ক্যাশ আউট</span> ব্যবহার করুন';
+      elSub.textContent = 'কম বা বেশি ক্যাশআউট করবেন না';
+    }
+    setLoading(false);
+  });
+})();
+</script>
+</body>
+</html>
